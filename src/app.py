@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from config import Config
 from flask_migrate import Migrate
 from extensions import db
+from auth import register
 
 # Init Flask
 app = Flask(__name__)
@@ -26,6 +27,10 @@ from models import User # A importer après la DB !!
 @app.route('/api/hello')
 def hello_world():
     return jsonify(message="Hello from Flask!")
+
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    return register()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
