@@ -1,17 +1,17 @@
 from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from config import Config
-from models import User
-from flask_migrate import Migrate 
+from flask_migrate import Migrate
+from extensions import db
 
 # Init Flask
 app = Flask(__name__)
 app.config.from_object(Config)
 
 # Init db
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
+from models import User # A importer après la DB !!
 
 # Modèle db (on le mettra dans un autre fichier plus tard)
 # class User(db.Model):
