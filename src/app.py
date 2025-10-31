@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from config import Config
 from flask_migrate import Migrate
 from extensions import db
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required
 
 # Init Flask
 app = Flask(__name__)
@@ -17,6 +17,7 @@ jwt = JWTManager(app)
 
 from models import User # A importer après la DB !!
 from auth import register, login
+from users import get_user_profile
 
 # Modèle db (on le mettra dans un autre fichier plus tard)
 # class User(db.Model):
@@ -39,6 +40,11 @@ def register_user():
 @app.route('/api/login', methods=['POST'])
 def login_user():
     return login()
+
+@app.route('/api/profile', methods=['GET'])
+@jwt_required() # Protection
+def profile():
+    return get_user_profile()
 
 
 if __name__ == '__main__':
