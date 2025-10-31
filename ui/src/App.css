@@ -1,38 +1,207 @@
+/* ui/src/App.css */
+
+/* 1. Layout Principal */
 .App {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-height: 90vh;
   text-align: center;
+  overflow: hidden; /* Pour les coins arrondis */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+main {
+  padding: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
+/* 2. Barre de Navigation (de App.js) */
+nav {
   background-color: #282c34;
-  min-height: 100vh;
+  padding: 1rem;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  margin: 0 15px;
+}
+
+nav a,
+nav button {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+nav a:hover {
+  background-color: #4a505c;
+}
+
+/* Style spécifique pour le bouton Déconnexion */
+nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #61dafb; /* Couleur React */
+}
+
+nav button:hover {
+  background-color: #4a505c;
+  color: #fff;
+}
+
+/* 3. Formulaires (Login, Register, CreateThread, Reply) */
+form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  max-width: 450px;
+  margin: 30px auto;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fcfcfc;
 }
 
-.App-link {
+form div {
+  margin-bottom: 15px;
+  text-align: left;
+  width: 100%;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* 4. Boutons */
+button {
+  background-color: #61dafb;
+  color: #282c34;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background-color: #52b9d7;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* 5. Liste des Sujets (HomePage) */
+.thread-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.thread-item {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: left;
+  transition: box-shadow 0.2s;
+}
+
+.thread-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.thread-item a {
+  text-decoration: none;
+  color: #282c34;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.thread-item a:hover {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.thread-item p {
+  margin: 8px 0 0 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* 6. Page de Sujet (ThreadPage) */
+.thread-original-post {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 10px 0 20px 0;
+  background: #fdfdfd;
+  text-align: left;
+  border-radius: 8px;
+}
+.thread-original-post h2 {
+  margin-top: 0;
+}
+
+.post-reply {
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #fafafa;
+  text-align: left;
+  border-radius: 5px;
+}
+
+.post-reply strong {
+  color: #007bff;
+}
+
+.post-reply small {
+  color: #777;
+  font-style: italic;
+}
+
+/* On enlève les styles moches des liens visités */
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+a:visited {
+  color: #007bff;
+}
+a:hover {
+  text-decoration: underline;
 }
