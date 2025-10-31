@@ -18,7 +18,8 @@ jwt = JWTManager(app)
 from models import User, Thread, Post # A importer après la DB !!
 from auth import register, login
 from users import get_user_profile
-from threads import create_thread, get_all_threads
+from threads import create_thread, get_all_threads, get_thread_details
+from posts import create_post_in_thread
 
 # Modèle db (on le mettra dans un autre fichier plus tard)
 # class User(db.Model):
@@ -55,6 +56,15 @@ def post_thread():
 @app.route('/api/threads', methods=['GET'])
 def list_threads():
     return get_all_threads()
+
+@app.route('/api/threads/<int:thread_id>', methods=['GET'])
+def get_single_thread(thread_id):
+    return get_thread_details(thread_id)
+
+@app.route('/api/threads/<int:thread_id>/posts', methods=['POST'])
+@jwt_required()
+def post_reply(thread_id):
+    return create_post_in_thread(thread_id)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
