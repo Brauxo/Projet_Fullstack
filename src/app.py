@@ -15,9 +15,10 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
 
-from models import User # A importer après la DB !!
+from models import User, Thread, Post # A importer après la DB !!
 from auth import register, login
 from users import get_user_profile
+from threads import create_thread, get_all_threads
 
 # Modèle db (on le mettra dans un autre fichier plus tard)
 # class User(db.Model):
@@ -46,6 +47,14 @@ def login_user():
 def profile():
     return get_user_profile()
 
+@app.route('/api/threads', methods=['POST'])
+@jwt_required()
+def post_thread():
+    return create_thread()
+
+@app.route('/api/threads', methods=['GET'])
+def list_threads():
+    return get_all_threads()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
