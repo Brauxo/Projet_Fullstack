@@ -11,6 +11,10 @@ Base de données
 
 `docker-compose up -d db`
 
+Attention si nouvelle machine il faut upgrade la db : 
+
+`docker-compose exec backend flask db upgrade`
+
 Cela va démarrer **uniquement** le service `db` (PostgreSQL) en arrière-plan. La base de données sera accessible sur `localhost:5432`, comme si elle était installée localement.
 
 Serveur Flask 

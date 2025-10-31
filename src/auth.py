@@ -2,6 +2,7 @@ from flask import request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User
 from extensions import db
+from flask_jwt_extended import create_access_token
 
 def register():
     # Recup la db
@@ -29,3 +30,24 @@ def register():
     db.session.commit()
 
     return jsonify({'message': 'Utilisateur créé avec succès'}), 201
+
+
+def login():
+    # Recup la db
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    # trouve l'utilisateur
+    user = User.query.filter_by(email=email).first()
+
+    # check que l'utilisateur existe et que le mdp est bon
+    if not user or not check_password_hash(user.password_hash, password):
+        return jsonify({'message': 'Identifiants invalides'}), 401
+    
+    # créer le token 
+    access_token = create_access_token(identity=user.id)
+
+    # renvoie le token
+    return jsonify(access_token=access_token)
