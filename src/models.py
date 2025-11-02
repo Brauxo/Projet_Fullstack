@@ -14,6 +14,8 @@ class User(db.Model):
     threads = db.relationship('Thread', backref='author', lazy=True)
     posts = db.relationship('Post', backref='author', lazy=True)
 
+    avatar_url = db.Column(db.String(255), nullable=True)
+
 
     def __repr__(self):
         return f'<User {self.username}>'
