@@ -48,10 +48,13 @@ def get_all_threads():
     # renvoie
     threads_data = []
     for thread in threads:
+        author_avatar_filename = thread.author.avatar_url or 'default_avatar.png'
         threads_data.append({
             "id": thread.id,
             "title": thread.title,
+            "author_id": thread.author.id, 
             "author_username": thread.author.username, 
+            "author_avatar_url": author_avatar_filename, 
             "created_at": thread.created_at.isoformat()
         })
 
@@ -63,16 +66,22 @@ def get_thread_details(thread_id):
     posts = Post.query.filter_by(thread_id=thread.id).order_by(Post.created_at.asc()).all()
     posts_data = []
     for post in posts:
+        post_author_avatar_filename = post.author.avatar_url or 'default_avatar.png'
         posts_data.append({
             "id": post.id,
             "content": post.content,
+            "author_id": post.author.id,
             "author_username": post.author.username,
+            "author_avatar_url": post_author_avatar_filename,
             "created_at": post.created_at.isoformat()
         })
+    thread_author_avatar_filename = thread.author.avatar_url or 'default_avatar.png'
     thread_details = {
         "id": thread.id,
         "title": thread.title,
+        "author_id": thread.author.id,
         "author_username": thread.author.username,
+        "author_avatar_url": thread_author_avatar_filename,
         "created_at": thread.created_at.isoformat(),
         "posts": posts_data
     }

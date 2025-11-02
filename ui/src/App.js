@@ -51,6 +51,7 @@ function App() {
               <Route path="/threads/:id" element={<ThreadPage />} />
               <Route path="/create-thread" element={<CreateThreadPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:id" element={<ProfilePage />} />
             </Routes>
           </main>
         </div>

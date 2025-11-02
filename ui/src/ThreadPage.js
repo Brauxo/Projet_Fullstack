@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import api from './api';
 
 function ThreadPage() {
@@ -49,12 +49,24 @@ function ThreadPage() {
     return <div>{message || 'Sujet non trouvé.'}</div>;
   }
 
-  return (
+console.log("Données du thread reçues par React:", thread);  /* A delete plus tard */
+
+return (
     <div>
       {/* 1. Le sujet original */}
       <h2>{thread.title}</h2>
-      <p>par {thread.author_username}</p>
-      <div className="thread-original-post"> {/* classe css à faire/ modif */}
+      <div className="author-info" style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+        <img 
+          src={`http://localhost:5000/uploads/${thread.author_avatar_url}`} 
+          alt={`Avatar de ${thread.author_username}`}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
+        />
+        <p style={{ margin: 0, fontSize: '1.1rem' }}>
+          par <Link to={`/profile/${thread.author_id}`}>{thread.author_username}</Link>
+        </p>
+      </div>
+
+      <div className="thread-original-post">
         {thread.posts && thread.posts.length > 0 ? (
             <p>{thread.posts[0].content}</p>
         ) : (
@@ -66,10 +78,20 @@ function ThreadPage() {
       {/* 2. Les réponses (posts) */}
       <h3>Réponses</h3>
       {thread.posts && thread.posts.length > 1 ? (
-        /* Pour Elliot : Faut commencer à 1 sinon ca affiche le sujet donc ca créer un doublon */
+      /* Pour Elliot : Faut commencer à 1 sinon ca affiche le sujet donc ca créer un doublon */
         thread.posts.slice(1).map((post) => (
-          <div key={post.id} className="post-reply"> {}
-            <p><strong>{post.author_username}</strong> a écrit :</p>
+          <div key={post.id} className="post-reply">
+            <div className="author-info" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              <img 
+                src={`http://localhost:5000/uploads/${post.author_avatar_url}`} 
+                alt={`Avatar de ${post.author_username}`}
+                style={{ width: '32px', height: '32px', borderRadius: '50%', marginRight: '8px', objectFit: 'cover' }}
+              />
+              <p style={{ margin: 0 }}>
+                <strong><Link to={`/profile/${post.author_id}`}>{post.author_username}</Link></strong> a écrit :
+              </p>
+            </div>
+
             <p>{post.content}</p>
             <small>le {new Date(post.created_at).toLocaleString()}</small>
           </div>
@@ -88,7 +110,6 @@ function ThreadPage() {
           onChange={(e) => setReplyContent(e.target.value)}
           placeholder="Votre réponse..."
           rows="5"
-          style={{ width: '80%' }}
         />
         <br />
         <button type="submit">Envoyer la réponse</button>

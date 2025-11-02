@@ -38,9 +38,7 @@ function HomePage() {
 
   return (
     <div>
-      {/* --- SECTION AJOUTÉE --- */}
       <h2>Bienvenue sur le forum !</h2>
-      {/* J'utilise les nouvelles classes CSS pour la nav et les listes */}
       <nav className="welcome-nav" style={{ marginBottom: '20px', border: '1px solid #e0e0e0', padding: '20px', borderRadius: '8px', backgroundColor: '#f9f9f9', maxWidth: '500px', margin: '20px auto' }}>
         <p style={{ marginTop: 0, fontWeight: 'bold' }}>Que souhaitez-vous faire ?</p>
         {token ? (
@@ -48,7 +46,6 @@ function HomePage() {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             <li style={{ margin: '10px 0' }}><Link to="/create-thread">Créer un nouveau sujet</Link></li>
             <li style={{ margin: '10px 0' }}><Link to="/profile">Voir mon profil</Link></li>
-            {/* Le bouton déconnexion est déjà dans App.js, pas besoin de le dupliquer ici */}
           </ul>
         ) : (
           // Si l'utilisateur n'est pas connecté
@@ -58,7 +55,6 @@ function HomePage() {
           </ul>
         )}
       </nav>
-      {/* --- FIN SECTION AJOUTÉE --- */}
 
       <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '30px 0' }} />
 
@@ -68,16 +64,22 @@ function HomePage() {
         On s'assure que 'threads' est bien un tableau avant de faire .length
       */}
       {Array.isArray(threads) && threads.length > 0 ? (
-        // J'ajoute la className pour que le CSS s'applique
         <ul className="thread-list">
           {threads.map((thread) => (
-            // J'ajoute la className pour que le CSS s'applique
             <li key={thread.id} className="thread-item">
               <Link to={`/threads/${thread.id}`}>
                 {thread.title}
               </Link>
-              {/* On ajoute une sécurité si 'author_username' n'existe pas */}
-              <p>par {thread.author_username || 'Anonyme'}</p>
+              <div className="author-info" style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                <img 
+                  src={`http://localhost:5000/uploads/${thread.author_avatar_url}`} 
+                  alt={`Avatar de ${thread.author_username}`}
+                  style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px' }}
+                />
+                <p style={{ margin: 0 }}>
+                  par <Link to={`/profile/${thread.author_id}`}>{thread.author_username || 'Anonyme'}</Link>
+                </p>
+              </div>
             </li>
           ))}
         </ul>

@@ -64,3 +64,17 @@ def upload_avatar():
         return jsonify({"message": "Avatar mis à jour avec succès", "avatar_url": unique_filename})
     else:
         return jsonify({"message": "Type de fichier non autorisé"}), 400
+    
+
+def get_public_user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+
+    avatar_filename = user.avatar_url or 'default_avatar.png'
+    public_data = {
+        "id": user.id,
+        "username": user.username,
+        "created_at": user.created_at.isoformat(),
+        "avatar_url": avatar_filename 
+    }
+
+    return jsonify(public_data)
