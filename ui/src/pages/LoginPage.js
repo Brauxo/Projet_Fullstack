@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +10,7 @@ function LoginPage() {
     event.preventDefault();
     try {
       // API Login
-      const response = await axios.post('/api/login', {
+      const response = await api.post('/api/login', {
         email,
         password
       });

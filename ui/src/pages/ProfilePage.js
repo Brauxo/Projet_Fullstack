@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import api from './api'; // Importe notre helper API
+import api from '../services/api'; // Importe notre helper API
 
 function ProfilePage() {
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');

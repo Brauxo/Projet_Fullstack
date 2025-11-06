@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import HomePage from './HomePage';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
-import ThreadPage from './ThreadPage';
-import CreateThreadPage from './CreateThreadPage';
-import ProfilePage from './ProfilePage';
-import { ApiInterceptor } from './api';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ThreadPage from './pages/ThreadPage';
+import CreateThreadPage from './pages/CreateThreadPage';
+import ProfilePage from './pages/ProfilePage';
+import { ApiInterceptor } from './services/api';
 import './App.css';
 
 function App() {

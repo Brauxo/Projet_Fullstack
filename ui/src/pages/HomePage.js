@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 
 function HomePage() {
@@ -12,7 +12,7 @@ function HomePage() {
   useEffect(() => {
     const fetchThreads = async () => {
       try {
-        const response = await axios.get('/api/threads');
+        const response = await api.get('/api/threads');
 
         if (Array.isArray(response.data)) {
           setThreads(response.data);

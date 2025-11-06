@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom'; // Pour la redirection
 
 function RegisterPage() {
@@ -13,7 +13,7 @@ function RegisterPage() {
     event.preventDefault();
     try {
       // API Register
-      const response = await axios.post('/api/register', {
+      const response = await api.post('/api/register', {
         username,
         email,
         password
