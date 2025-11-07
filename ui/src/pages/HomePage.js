@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 function HomePage() {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { themeName } = useParams(); // Récupère le thème depuis l'URL (si présent)
 
-  const token = localStorage.getItem('token');
-
+  // Titre dynamique basé sur le thème
+  const title = themeName ? `Flux: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}` : "Sujets récents";
 
   useEffect(() => {
+    // On pourrait filtrer les threads par thème ici plus tard
+    // Pour l'instant, on charge tout
     const fetchThreads = async () => {
+      setLoading(true);
       try {
         const response = await api.get('/api/threads');
-
         if (Array.isArray(response.data)) {
           setThreads(response.data);
-        }
-
-        else if (response.data && Array.isArray(response.data.threads)) {
+        } else if (response.data && Array.isArray(response.data.threads)) {
           setThreads(response.data.threads);
         }
-
         setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des threads:", error);
@@ -30,62 +30,53 @@ function HomePage() {
     };
 
     fetchThreads();
-  }, []);
+  }, [themeName]); // Se redéclenche si le thème change
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <h1 className="flux-title">Chargement...</h1>;
   }
 
   return (
     <div>
-      <h2>Bienvenue sur le forum !</h2>
-      <nav className="welcome-nav" style={{ marginBottom: '20px', border: '1px solid #e0e0e0', padding: '20px', borderRadius: '8px', backgroundColor: '#f9f9f9', maxWidth: '500px', margin: '20px auto' }}>
-        <p style={{ marginTop: 0, fontWeight: 'bold' }}>Que souhaitez-vous faire ?</p>
-        {token ? (
-          // Si l'utilisateur est connecté
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li style={{ margin: '10px 0' }}><Link to="/create-thread">Créer un nouveau sujet</Link></li>
-            <li style={{ margin: '10px 0' }}><Link to="/profile">Voir mon profil</Link></li>
-          </ul>
-        ) : (
-          // Si l'utilisateur n'est pas connecté
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li style={{ margin: '10px 0' }}><Link to="/login">Se connecter</Link></li>
-            <li style={{ margin: '10px 0' }}><Link to="/register">S'inscrire</Link></li>
-          </ul>
-        )}
-      </nav>
+      <h1 className="flux-title mb-6">{title}</h1>
 
-      <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '30px 0' }} />
+      <div className="game-grid">
+        {Array.isArray(threads) && threads.length > 0 ? (
+          threads.map((thread) => (
+            <Link to={`/threads/${thread.id}`} key={thread.id} className="game-card">
 
-      <h2>Sujets de discussion</h2>
-
-      {/* On ajoute une vérification de sécurité ici :
-        On s'assure que 'threads' est bien un tableau avant de faire .length
-      */}
-      {Array.isArray(threads) && threads.length > 0 ? (
-        <ul className="thread-list">
-          {threads.map((thread) => (
-            <li key={thread.id} className="thread-item">
-              <Link to={`/threads/${thread.id}`}>
-                {thread.title}
-              </Link>
-              <div className="author-info" style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                <img 
-                  src={`http://localhost:5000/uploads/${thread.author_avatar_url}`} 
-                  alt={`Avatar de ${thread.author_username}`}
-                  style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px' }}
+              {/* Image de la carte */}
+              {/* TODO: On utilisera l'image du jeu plus tard. Pour l'instant, placeholder. */}
+              <div className="game-card-image">
+                <img
+                  src={`https://placehold.co/600x338/94a3b8/1a1d21?text=${thread.title.charAt(0)}`}
+                  alt={`Sujet: ${thread.title}`}
                 />
-                <p style={{ margin: 0 }}>
-                  par <Link to={`/profile/${thread.author_id}`}>{thread.author_username || 'Anonyme'}</Link>
-                </p>
               </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Aucun sujet pour le moment.</p>
-      )}
+
+              {/* Contenu de la carte */}
+              <div className="game-card-content">
+                <span className="game-card-title">{thread.title}</span>
+                <div className="game-card-meta">
+                  {/* J'adapte la méta pour afficher l'auteur, ce que ton API fournit */}
+                  <span>
+                    <img
+                      src={`http://localhost:5000/uploads/${thread.author_avatar_url}`}
+                      alt={thread.author_username}
+                      style={{width: '16px', height: '16px', borderRadius: '50%'}}
+                    />
+                    {thread.author_username}
+                  </span>
+                  {/* TODO: Ajouter le nombre de réponses/vues quand l'API le fournira */}
+                  {/* <span><i data-lucide="message-circle"></i> 0</span> */}
+                </div>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p>Aucun sujet pour le moment.</p>
+        )}
+      </div>
     </div>
   );
 }

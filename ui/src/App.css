@@ -1,207 +1,282 @@
-/* ui/src/App.css */
+:root {
+    /* MODIFIÉ : Fond principal plus profond */
+    --bg-primary: #111111;
 
-/* 1. Layout Principal */
+    /* MODIFIÉ : Fond secondaire (barre du haut, cartes) */
+    --bg-secondary: #1f1f1f;
+
+    /* MODIFIÉ : Fond des cartes (un peu plus clair que le secondaire) */
+    --bg-card: #2c313a;
+
+    --border-color: #3b414c;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --accent-blue: #8a5cf6;
+}
+
+/* --- Layout Principal --- */
 .App {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  min-height: 90vh;
-  text-align: center;
-  overflow: hidden; /* Pour les coins arrondis */
+  min-height: 100vh;
 }
 
-main {
-  padding: 20px;
+/* --- Barre de navigation du haut --- */
+.top-nav {
+    border-bottom: 1px solid var(--border-color);
+    height: 64px;
+    /* MODIFIÉ : Fond identique au body */
+    background-color: var(--bg-primary);
 }
 
-/* 2. Barre de Navigation (de App.js) */
-nav {
-  background-color: #282c34;
-  padding: 1rem;
+/* NOUVEAU: Conteneur pour centrer le contenu de la nav */
+.top-nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    max-width: 1536px; /* Correspond au max-width de .main-layout */
+    margin: 0 auto;
+    padding: 0 1.5rem;
 }
 
-nav ul {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+.top-nav-left {
+    display: flex;
+    align-items: center;
+    /* MODIFIÉ : Espace augmenté */
+    gap: 2rem;
 }
 
-nav li {
-  margin: 0 15px;
+.hub-logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: white;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+.search-bar {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    /* MODIFIÉ : Style "pillule" */
+    border-radius: 9999px;
+    padding: 8px 16px;
+    /* MODIFIÉ : Barre plus large */
+    width: 500px;
+}
+.search-bar::placeholder {
+    color: var(--text-tertiary);
+}
+.search-bar:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px var(--accent-blue);
 }
 
-nav a,
-nav button {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+.top-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* gap-4 */
 }
 
-nav a:hover {
-  background-color: #4a505c;
+.nav-link {
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    padding: 8px;
+}
+.nav-link:hover {
+    color: var(--text-primary);
 }
 
-/* Style spécifique pour le bouton Déconnexion */
-nav button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #61dafb; /* Couleur React */
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
 }
 
-nav button:hover {
-  background-color: #4a505c;
-  color: #fff;
+.btn-create-subject {
+    background-color: var(--accent-blue);
+    color: white;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+.btn-create-subject:hover {
+    background-color: #2563eb; /* Un bleu un peu plus foncé */
+}
+.btn-create-subject svg {
+    width: 16px;
+    height: 16px;
 }
 
-/* 3. Formulaires (Login, Register, CreateThread, Reply) */
-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 450px;
-  margin: 30px auto;
-  padding: 25px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fcfcfc;
+/* Bouton Déconnexion (style simple) */
+.logout-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+    padding: 8px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+.logout-button:hover {
+    color: var(--text-primary);
 }
 
-form div {
-  margin-bottom: 15px;
-  text-align: left;
-  width: 100%;
+
+/* --- Conteneur Principal --- */
+.main-layout {
+    display: flex;
+    margin: 1rem auto 0 auto; /* Pour garder la marge du haut, mais pousser le contenu à droite */
+    margin-right: 0; /* Assure que le côté droit va jusqu'au bord */
 }
 
-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #555;
+/* --- Barre latérale (Thèmes) --- */
+.sidebar {
+    /* MODIFIÉ : Suppression de la bordure */
+    /* border-right: 1px solid var(--border-color); */
+
+    width: 240px;
+    flex-shrink: 0;
+    padding: 1rem; /* p-4 */
+
+    /* NOUVEAU : Hauteur minimale pour remplir l'écran */
+    min-height: calc(100vh - 64px - 1rem); /* 100vh - hauteur_nav - margin_top_main_layout */
+    height: fit-content;
+}
+.sidebar-title {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
 }
 
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form textarea {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/* NOUVEAU : Style pour la liste des thèmes */
+.theme-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
-form textarea {
-  min-height: 120px;
-  resize: vertical;
+.theme-link {
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+.theme-link:hover {
+    background-color: var(--bg-card);
+}
+.theme-link.active {
+    background-color: var(--accent-blue);
+    color: white;
+}
+.theme-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
-/* 4. Boutons */
-button {
-  background-color: #61dafb;
-  color: #282c34;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.2s, transform 0.1s;
+/* --- Contenu Principal (Flux) --- */
+main.main-content {
+    flex-grow: 1;
+    padding: 0 2rem;
 }
 
-button:hover {
-  background-color: #52b9d7;
+.flux-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.5rem;
 }
 
-button:active {
-  transform: scale(0.98);
+/* --- Grille de Jeux --- */
+.game-grid {
+    display: grid;
+    /* MODIFIÉ : Grille responsive (cartes 1.5x plus larges) */
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.5rem;
 }
 
-/* 5. Liste des Sujets (HomePage) */
-.thread-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.game-card {
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+}
+.game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.thread-item {
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  text-align: left;
-  transition: box-shadow 0.2s;
+.game-card-image {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Ratio 16:9 */
+    background-color: var(--bg-secondary); /* Fond pendant le chargement */
+}
+.game-card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.thread-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.game-card-content {
+    padding: 1rem;
 }
 
-.thread-item a {
-  text-decoration: none;
-  color: #282c34;
-  font-size: 1.3rem;
-  font-weight: 600;
+.game-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.game-card:hover .game-card-title {
+    color: var(--accent-blue);
 }
 
-.thread-item a:hover {
-  color: #61dafb;
+.game-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
 }
-
-.thread-item p {
-  margin: 8px 0 0 0;
-  color: #555;
-  font-size: 0.9rem;
+.game-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
 }
-
-/* 6. Page de Sujet (ThreadPage) */
-.thread-original-post {
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin: 10px 0 20px 0;
-  background: #fdfdfd;
-  text-align: left;
-  border-radius: 8px;
-}
-.thread-original-post h2 {
-  margin-top: 0;
-}
-
-.post-reply {
-  border: 1px solid #eee;
-  padding: 15px;
-  margin-bottom: 10px;
-  background: #fafafa;
-  text-align: left;
-  border-radius: 5px;
-}
-
-.post-reply strong {
-  color: #007bff;
-}
-
-.post-reply small {
-  color: #777;
-  font-style: italic;
-}
-
-/* On enlève les styles moches des liens visités */
-a {
-  text-decoration: none;
-  color: #007bff;
-}
-a:visited {
-  color: #007bff;
-}
-a:hover {
-  text-decoration: underline;
+.game-card-meta svg {
+    width: 16px;
+    height: 16px;
 }
