@@ -5,3 +5,4 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@db:5432/forum_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    RAWG_API_KEY = os.environ.get('RAWG_API_KEY')

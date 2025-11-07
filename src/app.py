@@ -17,7 +17,7 @@ jwt = JWTManager(app)
 
 from models import User, Thread, Post # A importer après la DB !!
 from auth import register, login
-from users import get_user_profile, upload_avatar, get_public_user_profile
+from users import get_user_profile, upload_avatar, get_public_user_profile, delete_user_profile
 from threads import create_thread, get_all_threads, get_thread_details
 from posts import create_post_in_thread
 from uploads import serve_upload
@@ -79,6 +79,11 @@ def get_upload(filename):
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     return get_public_user_profile(user_id)
+
+@app.route('/api/users/me', methods=['DELETE'])
+@jwt_required()
+def delete_user():
+    return delete_user_profile()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

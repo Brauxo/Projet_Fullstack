@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams , useNavigate} from 'react-router-dom';
 import api from '../services/api'; // Importe notre helper API
 
 function ProfilePage() {
@@ -10,6 +10,7 @@ function ProfilePage() {
   const { id } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const navigate = useNavigate();
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
@@ -69,6 +70,28 @@ function ProfilePage() {
   }
 
   const avatarUrl = `http://localhost:5000/uploads/${profileData.avatar_url}`;
+  const handleDeleteAccount = async () => {
+  // Demande de confirmation
+  if (!window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.")) {
+    return;
+  }
+
+  try {
+    await api.delete('/api/users/me');
+
+    // Déconnexion
+    localStorage.removeItem('token');
+
+    // Redirection
+    setMessage("Compte supprimé avec succès. Redirection...");
+    setTimeout(() => {
+      window.location.href = '/login'; // Redirige vers la page de connexion
+    }, 2000);
+
+  } catch (error) {
+    setMessage(error.response?.data?.message || "Erreur lors de la suppression du compte.");
+  }
+  };
 
   return (
     <div>
@@ -86,22 +109,30 @@ function ProfilePage() {
         <p><strong>Email:</strong> {profileData.email}</p>
       )}
       {isOwnProfile && (
-        <>
-          <hr style={{ margin: '30px 0' }} />
-          <h3>Changer ma photo de profil</h3>
-          <form onSubmit={handleAvatarUpload}>
-            <div>
-              <label>Nouveau Fichier:</label>
-              <input 
-                type="file" 
-                onChange={handleFileChange} 
-                accept="image/png, image/jpeg, image/gif"
-              />
-            </div>
-            <button type="submit" style={{ marginTop: '10px' }}>Mettre à jour</button>
-          </form>
-          {message && <p>{message}</p>}
-        </>
+          <>
+            <hr style={{margin: '30px 0'}}/>
+            <h3>Changer ma photo de profil</h3>
+            <form onSubmit={handleAvatarUpload}>
+              <div>
+                <label>Nouveau Fichier:</label>
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/png, image/jpeg, image/gif"
+                />
+              </div>
+              <button type="submit" style={{marginTop: '10px'}}>Mettre à jour</button>
+            </form>
+            {message && <p>{message}</p>}
+            <hr style={{margin: '30px 0'}}/>
+            <h3 style={{color: 'red'}}>Zone de danger</h3>
+            <button
+                onClick={handleDeleteAccount}
+                style={{backgroundColor: '#dc3545', color: 'white'}}
+            >
+              Supprimer mon compte définitivement
+            </button>
+          </>
       )}
     </div>
   );

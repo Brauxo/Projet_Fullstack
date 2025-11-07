@@ -11,8 +11,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Forum relationships
-    threads = db.relationship('Thread', backref='author', lazy=True)
-    posts = db.relationship('Post', backref='author', lazy=True)
+    threads = db.relationship('Thread', backref='author', lazy=True, cascade="all, delete-orphan")
+    posts = db.relationship('Post', backref='author', lazy=True, cascade="all, delete-orphan")
 
     avatar_url = db.Column(db.String(255), nullable=True)
 

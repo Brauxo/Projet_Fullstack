@@ -25,12 +25,11 @@ def get_user_profile():
     avatar_filename = user.avatar_url or 'default_avatar.png'
     avatar_full_url = url_for('get_upload', filename=avatar_filename, _external=True)
 
-    # renvoie sans le password
     user_data = {
         "id": user.id,
         "username": user.username,
         "email": user.email,
-        "created_at": user.created_at.isoformat(), # date de creation format ISO
+        "created_at": user.created_at.isoformat(),
         "avatar_url": avatar_filename 
     }
 
@@ -78,3 +77,26 @@ def get_public_user_profile(user_id):
     }
 
     return jsonify(public_data)
+def delete_user_profile():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"message": "Utilisateur non trouvé"}), 404
+
+    avatar_filename = user.avatar_url
+    if avatar_filename and avatar_filename != 'default_avatar.png':
+        filepath = os.path.join(UPLOAD_FOLDER, avatar_filename)
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except Exception as e:
+                print(f"Erreur suppression avatar: {e}")
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message": "Utilisateur supprimé avec succès"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Erreur lors de la suppression: {e}"}), 500
