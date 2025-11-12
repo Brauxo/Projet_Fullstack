@@ -1,0 +1,393 @@
+/*
+ * =========================================
+ * CSS POUR LA PAGE SUJET (ThreadPage.css)
+ * =========================================
+ */
+
+/* Utilise les variables définies dans index.css */
+:root {
+  --spacing-small: 10px;
+  --spacing-medium: 15px;
+  --spacing-large: 20px;
+}
+
+/* --- CONTENEUR PRINCIPAL --- */
+.thread-page-container {
+  max-width: 1200px; /* MODIFIÉ : Plus large pour un look moderne */
+  margin: 0 auto;
+}
+
+/* --- SECTION 1: L'EN-TÊTE DU JEU --- */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: var(--spacing-medium);
+  margin-bottom: var(--spacing-large);
+}
+
+.game-header h2 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-small);
+}
+
+.header-actions button {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.like-button {
+  background-color: var(--container-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.like-button:hover {
+  background-color: #4b5563; /* Un peu plus clair */
+}
+
+.like-button.liked {
+  background-color: #f43f5e; /* Rose */
+  color: white;
+  border-color: #f43f5e;
+}
+
+.delete-thread-button {
+  background-color: #dc3545; /* Rouge */
+  color: white;
+  transition: background-color 0.2s ease;
+}
+.delete-thread-button:hover {
+  background-color: #b02a37;
+}
+
+/* --- SECTION 2: INFOS PRINCIPALES (2 colonnes) --- */
+.game-main-info {
+  display: flex;
+  gap: var(--spacing-large);
+  margin-bottom: var(--spacing-large);
+}
+
+/* Colonne de Gauche : Image */
+.game-image-column {
+  flex: 2; /* Prend 1 part d'espace */
+  min-width: 250px;
+}
+
+.game-image-column img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  height: 350px; /* AJOUTÉ : Force le "crop" de l'image */
+}
+
+/* Colonne de Droite : Méta-données */
+.game-meta-column {
+  flex: 2; /* Prend 2 parts d'espace */
+  background-color: var(--container-bg);
+  padding: var(--spacing-large);
+  border-radius: 8px;
+}
+
+.game-meta-column h3 {
+  margin-top: 0;
+  color: #fff; /* Plus blanc pour le titre */
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-small);
+}
+
+.meta-item {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-small) 0;
+  border-bottom: 1px solid #444; /* Ligne plus foncée */
+  font-size: 0.9rem;
+}
+.meta-item:last-child {
+  border-bottom: none;
+}
+
+.meta-item strong {
+  color: #a0a0a0; /* Gris clair pour le label */
+  margin-right: var(--spacing-small);
+}
+
+.meta-item span {
+  text-align: right;
+  color: #fff; /* Blanc pour la valeur */
+  max-width: 60%; /* Empêche les longs textes de pousser le label */
+}
+
+.meta-item a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+.meta-item a:hover {
+  text-decoration: underline;
+}
+
+.metacritic-score {
+  font-weight: 700;
+  color: #6cff6c; /* Vert Metacritic */
+  font-size: 1.1em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #384a38;
+}
+
+/* --- SECTION 3: DESCRIPTION DU JEU --- */
+.game-description {
+  background-color: var(--container-bg);
+  padding: var(--spacing-large);
+  border-radius: 8px;
+}
+.game-description h3 {
+  margin-top: 0;
+  color: #fff;
+}
+.game-description p {
+  white-space: pre-wrap; /* Respecte les sauts de ligne */
+  color: var(--text-color);
+}
+
+/* --- SECTION 4: DISCUSSIONS --- */
+.section-divider {
+  border: 0;
+  border-top: 2px solid var(--border-color);
+  margin: 30px 0;
+}
+
+.discussion-section h3 {
+  color: #fff;
+}
+
+.avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: var(--spacing-small);
+}
+
+/* 4a. Le Post Original (OP) */
+.original-post {
+  background-color: #333; /* Fond légèrement différent */
+  border: 1px solid #555;
+  padding: var(--spacing-large);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-large);
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-small);
+  color: #a0a0a0;
+  font-size: 0.9em;
+}
+
+.author-info strong {
+  color: #fff;
+}
+/* Style pour le badge (Auteur) */
+.author-info .op-badge {
+  background-color: #007bff;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.post-content {
+  margin-bottom: var(--spacing-medium);
+  white-space: pre-wrap;
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.post-actions {
+  margin-top: var(--spacing-medium);
+  display: flex;
+  gap: var(--spacing-small);
+}
+
+.post-actions button {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.post-actions .delete-button {
+  background-color: #dc3545;
+}
+
+/* 4b. La liste des réponses */
+.replies-header {
+  color: #fff;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+  margin-top: 30px;
+  margin-bottom: var(--spacing-large);
+}
+
+.replies-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+}
+
+.post-reply {
+  background-color: var(--container-bg);
+  padding: var(--spacing-medium);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+/* 4c. Le formulaire pour répondre */
+.reply-form {
+  background-color: var(--container-bg);
+  padding: var(--spacing-large);
+  border-radius: 8px;
+  margin-top: 30px;
+  border: 1px solid var(--border-color);
+}
+
+.reply-form h3 {
+  margin-top: 0;
+  color: #fff;
+}
+
+.reply-form textarea {
+  width: 100%;
+  min-height: 100px;
+  background-color: #1f1f1f;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box; /* Important! */
+}
+
+.reply-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* Styles pour le formulaire d'édition (dans les posts) */
+.post-edit-form textarea {
+  width: 100%;
+  min-height: 80px;
+  background-color: #1f1f1f;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.post-edit-form div {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+.post-edit-form button {
+  font-size: 0.85rem;
+}
+.post-edit-form button[type="submit"] {
+  background-color: #28a745; /* Vert */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.post-edit-form button[type="button"] {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+  .game-main-info {
+    flex-direction: column;
+  }
+
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-medium);
+  }
+}
+
+/* ... (tous tes styles existants de ThreadPage.css sont là) ... */
+
+/* NOUVEAU : Lien "Retour" */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 20px;
+  transition: color 0.2s ease;
+}
+.back-link:hover {
+  color: var(--text-primary);
+}
+.back-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* NOUVEAU : Conteneur large pour le haut (infos jeu) */
+/* Il s'aligne sur la barre de navigation du haut */
+.thread-header-wrapper {
+  /* max-width: 1536px; */ /* SUPPRIMÉ - On utilise le max-width du conteneur parent */
+  margin: 0 auto;
+  padding: 1.5rem; /* Correspond au padding de top-nav-content */
+}
+
+/* NOUVEAU : Conteneur étroit pour les discussions (centré) */
+/* C'est là qu'on met la marge "plus petite" */
+.thread-discussion-wrapper {
+  /* max-width: 900px; */ /* SUPPRIMÉ - On utilise le max-width du conteneur parent */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* MODIFIÉ : On retire la largeur max du conteneur global */
+.thread-page-container {
+  max-width: 1200px; /* MODIFIÉ : 900px -> 1200px */
+  margin: 0 auto;
+}

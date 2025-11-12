@@ -20,6 +20,7 @@ function HomePage() {
         if (Array.isArray(response.data)) {
           setThreads(response.data);
         } else if (response.data && Array.isArray(response.data.threads)) {
+          // Au cas où l'API renverrait { threads: [...] }
           setThreads(response.data.threads);
         }
         setLoading(false);
@@ -45,11 +46,10 @@ function HomePage() {
           threads.map((thread) => (
             <Link to={`/threads/${thread.id}`} key={thread.id} className="game-card">
 
-              {/* Image de la carte */}
-              {/* TODO: On utilisera l'image du jeu plus tard. Pour l'instant, placeholder. */}
+              {/* MODIFIÉ: Utilisation de la vraie image du jeu */}
               <div className="game-card-image">
                 <img
-                  src={`https://placehold.co/600x338/94a3b8/1a1d21?text=${thread.title.charAt(0)}`}
+                  src={thread.game_image_url || `https://placehold.co/600x338/94a3b8/1a1d21?text=${thread.title.charAt(0)}`}
                   alt={`Sujet: ${thread.title}`}
                 />
               </div>

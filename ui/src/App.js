@@ -9,29 +9,25 @@ import ProfilePage from './pages/ProfilePage';
 import { ApiInterceptor } from './services/api';
 import './App.css'; // On importe notre nouveau CSS
 
-// Hook pour rafraîchir les icônes Lucide à chaque changement de page
+// Hook pour rafraîchir les icônes Lucide (inchangé)
 function useLucideIcons() {
   const location = useLocation();
   useEffect(() => {
-    // On met un léger délai pour laisser React mettre à jour le DOM
     const timer = setTimeout(() => {
       if (window.lucide) {
         window.lucide.createIcons();
       }
-    }, 10); // 10ms
+    }, 10);
     return () => clearTimeout(timer);
-  }, [location.pathname]); // Se redéclenche à chaque changement de route
+  }, [location.pathname]);
 }
 
-// Composant pour la barre latérale (Sidebar)
+// Composant pour la barre latérale (Sidebar) (inchangé)
 function Sidebar() {
-  // Plus tard, on pourra rendre le "active" dynamique
   return (
     <aside className="sidebar">
         <h3 className="sidebar-title">Thèmes</h3>
-        {/* MODIFIÉ : Ajout de la classe "theme-list" */}
         <ul className="theme-list">
-            {/* On utilise des Link pour la navigation React */}
             <li><Link to="/theme/fortnite" className="theme-link active"><i data-lucide="flame"></i><span>Fortnite</span></Link></li>
             <li><Link to="/theme/valorant" className="theme-link"><i data-lucide="sword"></i><span>Valorant</span></Link></li>
             <li><Link to="/theme/lol" className="theme-link"><i data-lucide="shield"></i><span>League of Legends</span></Link></li>
@@ -42,34 +38,44 @@ function Sidebar() {
   );
 }
 
+// NOUVEAU : On crée un composant de Layout
+// Il contient la sidebar et le conteneur principal
+function MainLayout({ children }) {
+  return (
+    <div className="main-layout">
+      <Sidebar />
+      <main className="main-content">
+        {children}
+      </main>
+    </div>
+  );
+}
+
 // Composant principal de l'App
 function AppContent() {
   useLucideIcons(); // Active le hook pour les icônes
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/login'; // Gardons le rechargement pour l'instant
+    window.location.href = '/login';
   };
 
   const token = localStorage.getItem('token');
 
   return (
     <div className="App">
-      {/* 1. Barre de Navigation du Haut */}
+      {/* 1. Barre de Navigation du Haut (inchangée) */}
       <nav className="top-nav">
-        {/* MODIFIÉ : Ajout d'un conteneur pour centrer le contenu */}
         <div className="top-nav-content">
           <div className="top-nav-left">
             <Link to="/" className="hub-logo">GameHub</Link>
             <input type="text" placeholder="Rechercher dans le Hub..." className="search-bar" />
           </div>
-
           <div className="top-nav-right">
             <Link to="/create-thread" className="btn-create-subject">
               <i data-lucide="plus"></i>
               <span>Créer un sujet</span>
             </Link>
-
             {token ? (
               <>
                 <Link to="/profile" className="nav-link">Mon Profil</Link>
@@ -86,31 +92,28 @@ function AppContent() {
         </div>
       </nav>
 
-      {/* 2. Contenu Principal (Layout Sidebar + Flux) */}
-      <div className="main-layout">
+      {/* 2. Contenu Principal (MODIFIÉ) */}
+      {/* Le layout (sidebar + main) est maintenant géré par les routes.
+        On retire les div .main-layout et .main-content d'ici.
+      */}
+      <Routes>
+        {/* Ces routes utiliseront le MainLayout (avec sidebar) */}
+        <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
+        <Route path="/theme/:themeName" element={<MainLayout><HomePage /></MainLayout>} />
 
-        <Sidebar />
-
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            {/* On ajoute des routes pour les thèmes (même si elles pointent vers HomePage) */}
-            <Route path="/theme/:themeName" element={<HomePage />} />
-
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/threads/:id" element={<ThreadPage />} />
-            <Route path="/create-thread" element={<CreateThreadPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/:id" element={<ProfilePage />} />
-          </Routes>
-        </main>
-      </div>
+        {/* Ces routes seront en pleine largeur (pas de sidebar) */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/threads/:id" element={<ThreadPage />} />
+        <Route path="/create-thread" element={<CreateThreadPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
+      </Routes>
     </div>
   );
 }
 
-// Wrapper global (pour le Router et l'Interceptor)
+// Wrapper global (inchangé)
 function App() {
   return (
     <Router>
