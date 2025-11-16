@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams , useNavigate} from 'react-router-dom';
-import api from '../services/api'; // Importe notre helper API
+import { useParams } from 'react-router-dom';
+import api from '../services/api';
+import './ProfilePage.css'; 
 
 function ProfilePage() {
-  //const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false); 
   const { id } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const navigate = useNavigate();
 
+  // La logique de fetchProfile est correcte
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     try {
@@ -39,10 +40,12 @@ function ProfilePage() {
     setSelectedFile(event.target.files[0]);
   };
 
+  // Logique d'upload d'avatar (mise à jour pour les messages)
   const handleAvatarUpload = async (event) => {
     event.preventDefault();
     if (!selectedFile) {
       setMessage("Veuillez sélectionner un fichier.");
+      setIsError(true);
       return;
     }
 
@@ -56,84 +59,94 @@ function ProfilePage() {
         },
       });
       setMessage("Avatar mis à jour avec succès !");
-      fetchProfile(); 
+      setIsError(false);
+      fetchProfile(); // Rafraîchit les données (et donc l'avatar)
     } catch (error) {
       setMessage(error.response?.data?.message || "Erreur lors de l'envoi.");
+      setIsError(true);
     }
   };
+
+  // Logique de suppression de compte (mise à jour pour les messages)
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.")) {
+      return;
+    }
+    try {
+      await api.delete('/api/users/me');
+      localStorage.removeItem('token');
+      setMessage("Compte supprimé avec succès. Redirection...");
+      setIsError(false);
+      setTimeout(() => {
+        window.location.href = '/login'; 
+      }, 2000);
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Erreur lors de la suppression du compte.");
+      setIsError(true);
+    }
+  };
+  
   if (loading) {
-    return <div>Chargement du profil...</div>;
+    return <div className="form-container">Chargement du profil...</div>;
   }
 
   if (!profileData) { 
-    return <div>Impossible de charger le profil.</div>;
+    return <div className="form-container">Impossible de charger le profil.</div>;
   }
 
   const avatarUrl = `http://localhost:5000/uploads/${profileData.avatar_url}`;
-  const handleDeleteAccount = async () => {
-  // Demande de confirmation
-  if (!window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.")) {
-    return;
-  }
-
-  try {
-    await api.delete('/api/users/me');
-
-    // Déconnexion
-    localStorage.removeItem('token');
-
-    // Redirection
-    setMessage("Compte supprimé avec succès. Redirection...");
-    setTimeout(() => {
-      window.location.href = '/login'; // Redirige vers la page de connexion
-    }, 2000);
-
-  } catch (error) {
-    setMessage(error.response?.data?.message || "Erreur lors de la suppression du compte.");
-  }
-  };
 
   return (
-    <div>
-      <h2>Profil de {profileData.username}</h2>
-      <img 
-        src={avatarUrl} 
-        alt={`Avatar de ${profileData.username}`}
-        style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover', marginBottom: '20px' }}
-      />
+    <div className="profile-page-container form-container">
+      <div className="profile-card form-card">
 
-      <p><strong>Nom d'utilisateur:</strong> {profileData.username}</p>
-      
-      {/* AFFICHE L'EMAIL si c'est notre profil) */}
-      {isOwnProfile && (
-        <p><strong>Email:</strong> {profileData.email}</p>
-      )}
-      {isOwnProfile && (
+        <div className="profile-header">
+          <img 
+            src={avatarUrl} 
+            alt={`Avatar de ${profileData.username}`}
+            className="profile-avatar"
+          />
+          <div className="profile-info">
+            <h2 className="profile-username">{profileData.username}</h2>
+            {isOwnProfile && (
+              <p className="profile-email">{profileData.email}</p>
+            )}
+          </div>
+        </div>
+
+        {isOwnProfile && (
           <>
-            <hr style={{margin: '30px 0'}}/>
+            <hr />
             <h3>Changer ma photo de profil</h3>
-            <form onSubmit={handleAvatarUpload}>
-              <div>
-                <label>Nouveau Fichier:</label>
+            <form onSubmit={handleAvatarUpload} className="avatar-form">
+              <div className="form-group" style={{ flexGrow: 1, marginBottom: 0 }}>
                 <input
                     type="file"
                     onChange={handleFileChange}
                     accept="image/png, image/jpeg, image/gif"
+                    className="form-input"
                 />
               </div>
-              <button type="submit" style={{marginTop: '10px'}}>Mettre à jour</button>
+              <button type="submit" className="form-button">Mettre à jour</button>
             </form>
-            {message && <p>{message}</p>}
-            <hr style={{margin: '30px 0'}}/>
-            <h3 style={{color: 'red'}}>Zone de danger</h3>
-            <button
-                onClick={handleDeleteAccount}
-                style={{backgroundColor: '#dc3545', color: 'white'}}
-            >
-              Supprimer mon compte définitivement
-            </button>
+            
+            {/* Message de succès ou d'erreur */}
+            {message && <p className={`form-message ${isError ? '' : 'success'}`}>{message}</p>}
+
+            <hr />
+            <div className="danger-zone">
+              <h3>Zone de danger</h3>
+              <p style={{marginTop: 0, color: '#721c24'}}>Cette action est irréversible.</p>
+              <button
+                  onClick={handleDeleteAccount}
+                  className="delete-button"
+              >
+                Supprimer mon compte
+              </button>
+            </div>
           </>
-      )}
+        )}
+      </div>
     </div>
   );
 }

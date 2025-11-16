@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import './CreateThreadPage.css';
 
 // Hook simple pour "déclencher" une action après un délai
 // On l'utilise pour ne pas appeler l'API à chaque frappe
@@ -31,6 +32,8 @@ function CreateThreadPage() {
   // NOUVEL ÉTAT pour savoir si le sujet existe
   const [existingThreadId, setExistingThreadId] = useState(null);
 
+  const [isError, setIsError] = useState(false);
+
   const debouncedSearchQuery = useDebounce(searchQuery, 300); // 300ms de délai
 
   // Fonction pour rechercher les jeux
@@ -47,6 +50,7 @@ function CreateThreadPage() {
     } catch (error) {
       console.error("Erreur recherche de jeu:", error);
       setMessage("Erreur lors de la recherche du jeu.");
+      setIsError(true);
     } finally {
       setIsSearching(false);
     }
@@ -68,6 +72,7 @@ function CreateThreadPage() {
     setSearchQuery(game.name); // Remplit le champ de recherche avec le nom
     setSearchResults([]); // Cache les résultats
     setMessage("Vérification de l'existence d'un sujet..."); // Message temporaire
+    setIsError(false);
 
     try {
       // NOUVEL APPEL API pour vérifier si le sujet existe
@@ -75,13 +80,16 @@ function CreateThreadPage() {
       if (response.data.exists) {
         setExistingThreadId(response.data.thread_id);
         setMessage("Ce jeu a déjà un sujet de discussion. Votre message sera ajouté à la discussion existante.");
+        setIsError(false);
       } else {
         setExistingThreadId(null);
         setMessage("Vous êtes le premier à lancer une discussion sur ce jeu !");
+        setIsError(false);
       }
     } catch (error) {
       console.error("Erreur vérification sujet:", error);
       setMessage("Impossible de vérifier si un sujet existe.");
+      setIsError(true);
     }
   };
 
@@ -91,12 +99,14 @@ function CreateThreadPage() {
     setSearchQuery('');
     setExistingThreadId(null); // Réinitialiser
     setMessage(''); // Réinitialiser
+    setIsError(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedGame || !content) {
       setMessage('Veuillez sélectionner un jeu et écrire un premier message.');
+      setIsError(true);
       return;
     }
 
@@ -112,74 +122,95 @@ function CreateThreadPage() {
 
     } catch (error) {
       setMessage(error.response?.data?.message || 'Une erreur est survenue.');
+      setIsError(true);
     }
   };
 
-  return (
-    <div>
-      <h2>Lancer une nouvelle discussion</h2>
-      <form onSubmit={handleSubmit}>
+return (
+    <div className="form-container">
+      <div className="form-card">
+        <h2>Lancer une nouvelle discussion</h2>
+        <form onSubmit={handleSubmit}>
 
-        {/* --- Section 1: Sélection du jeu --- */}
-        <div>
-          <label>1. Choisissez un jeu :</label>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Commencez à taper un nom de jeu..."
-            disabled={!!selectedGame}
-            style={{width: '100%', marginBottom: '5px'}}
-          />
+          {/* --- Section 1: Sélection du jeu --- */}
+          <div className="form-group">
+            <label className="form-label">1. Choisissez un jeu :</label>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Commencez à taper un nom de jeu..."
+              disabled={!!selectedGame}
+              className="form-input"
+            />
+          </div>
 
           {selectedGame && (
-            <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px', background: '#2c313a', padding: '10px', borderRadius: '8px'}}>
-              <img src={selectedGame.background_image} alt={selectedGame.name} style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px', marginRight: '10px'}} />
-              <span style={{flexGrow: 1}}>{selectedGame.name}</span>
-              <button type="button" onClick={handleClearSelection} style={{background: '#dc3545', color: 'white'}}>Changer</button>
+            <div className="selected-game-card">
+              <img 
+                src={selectedGame.background_image} 
+                alt={selectedGame.name} 
+                className="selected-game-image"
+              />
+              <span className="selected-game-info">{selectedGame.name}</span>
+              <button 
+                type="button" 
+                onClick={handleClearSelection} 
+                className="form-button button-danger"
+              >
+                Changer
+              </button>
             </div>
           )}
 
-          {isSearching && !selectedGame && <p>Recherche...</p>}
+          {isSearching && !selectedGame && <p className="form-message info">Recherche...</p>}
 
           {searchResults.length > 0 && !selectedGame && (
-            <ul style={{listStyle: 'none', padding: 0, margin: 0, border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden'}}>
+            <ul className="search-results-list">
               {searchResults.map((game) => (
                 <li
                   key={game.id}
                   onClick={() => handleSelectGame(game)}
-                  style={{padding: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px'}}
-                  className="search-result-item" // Ajoutez une classe pour le hover CSS si vous voulez
+                  className="search-result-item"
                 >
-                  <img src={game.background_image} alt="" style={{width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px'}} />
+                  <img 
+                    src={game.background_image} 
+                    alt="" 
+                    className="search-result-image" 
+                  />
                   {game.name}
                 </li>
               ))}
             </ul>
           )}
-        </div>
 
-        {/* --- Section 2: Contenu du post --- */}
-        {selectedGame && (
-          <div style={{marginTop: '20px'}}>
-            <label>2. Votre premier message :</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows="8"
-              placeholder="Partagez un avis, une question, une astuce..."
-              style={{width: '100%'}}
-            />
-          </div>
+          {/* --- Section 2: Contenu du post --- */}
+          {selectedGame && (
+            <div className="form-group">
+              <label className="form-label">2. Votre premier message :</label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows="8"
+                placeholder="Partagez un avis, une question, une astuce..."
+                className="form-input"
+              />
+            </div>
+          )}
+
+          {/* Bouton dynamique */}
+          <button type="submit" disabled={!selectedGame || !content} className="form-button">
+            {existingThreadId ? "Ajouter à la discussion" : "Lancer la discussion"}
+          </button>
+        </form>
+        
+        {/* Message de statut (style géré par isError) */}
+        {message && (
+          <p className={`form-message ${isError ? '' : 'success'}`}>
+            {message}
+          </p>
         )}
-
-        {/* MODIFIÉ : Texte du bouton dynamique */}
-        <button type="submit" disabled={!selectedGame || !content} style={{marginTop: '20px'}}>
-          {existingThreadId ? "Ajouter à la discussion" : "Lancer la discussion"}
-        </button>
-      </form>
-      {/* Le message de statut s'affiche ici */}
-      {message && <p>{message}</p>}
+      </div>
     </div>
   );
 }
