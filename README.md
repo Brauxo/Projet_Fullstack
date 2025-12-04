@@ -58,37 +58,68 @@ Le frontend est construit avec **React** en JavaScript, assurant une interface f
 
 ### 1 - Avant tout
 
-Dans un premier temps, vous devez installer 
-**<a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a>** pour faire fonctionner le projet.
+Dans un premier temps, vous devez installer
+**`<a href="https://www.docker.com/products/docker-desktop/" target="_blank">`{=html}Docker
+Desktop`</a>`{=html}** pour faire fonctionner le projet.
 
 Faites une installation classique.
 
 ### 2 - Configuration API
 
-Ce projet utilise l'API **RAWG** pour récupérer les données des jeux vidéo.
-1. Créez un compte sur [RAWG.io](https://rawg.io/apidocs).
-2. Récupérez votre clé API gratuite.
-3. Dans le fichier `docker-compose.yml` (ou via une variable d'environnement), assurez-vous de définir `RAWG_API_KEY`.
+Ce projet utilise l'API **RAWG** pour récupérer les données des jeux
+vidéo. La clé API ne doit pas être commise dans le code.
 
-### 3 - Lancer le projet
+1.  Récupérez votre clé API (fournie avec le rendu ou gratuite sur
+    [RAWG.io](https://rawg.io/apidocs)).
+2.  À la racine du projet, trouvez le fichier **`.env.example`**.
+3.  Renommez-le simplement en **`.env`** (ou faites-en une copie nommée
+    `.env`).
+4.  Ouvrez ce fichier `.env` et remplacez la valeur par votre clé :
+    `env     RAWG_API_KEY=votre_vraie_clé_ici`
 
-Tout d'abord, veuillez lancer l'application docker (e.g. **Docker Desktop** sur Windows).
-Elle doit être en fonctionnement pour continuer.
+### 3 - Lancer et Initialiser le projet
 
-Rejoignez le dossier du projet dans un terminal :
-```bash 
+Tout d'abord, veuillez lancer l'application **Docker Desktop**.
+
+Rejoignez le dossier du projet dans un terminal (PowerShell recommandé)
+:
+
+``` bash
 $ cd chemin/vers/le/projet
-``` 
- 
-Rentrez la commande suivante pour construire et lancer les conteneurs :
+```
 
-```bash
-$ docker compose up --build
-``` 
-Patientez jusqu'à ce que les services (backend, db, ui) soient démarrés. Les migrations de base de données (Alembic) se lanceront automatiquement au démarrage du backend.
+1.  Nettoyage (Recommandé pour une installation propre)\
+    Si vous avez déjà lancé le projet auparavant, supprimez le volume de
+    données pour repartir de zéro :
 
-Une fois le service **frontend** prêt, ouvrez votre navigateur à l'adresse :
-**<a href="http://localhost:3000" target="_blank">http://localhost:3000</a>**
+``` bash
+Remove-Item -Recurse -Force data
+```
+
+(Si le dossier n'existe pas ou si c'est la première fois, ignorez cette
+étape).
+
+2.  Lancement des conteneurs\
+    Construisez et démarrez les services :
+
+``` bash
+docker compose up --build -d
+```
+
+Patientez que les services (backend, db, ui) soient tous démarrés.
+
+3.  Remplissage de la base de données (Seed)\
+    La base de données est vide au démarrage. Pour créer des
+    utilisateurs, importer des jeux via l'API et générer de l'activité,
+    lancez ce script :
+
+``` bash
+docker compose exec backend python seed_db.py
+```
+
+Une fois le script terminé, ouvrez votre navigateur à l'adresse :
+`<a href="http://localhost:3000" target="_blank">`{=html}http://localhost:3000`</a>`{=html}
+
 
 ### 4 - Utiliser l'application Web
 
