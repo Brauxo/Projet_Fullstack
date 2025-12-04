@@ -8,7 +8,7 @@ services:
       - "5000:5000"
     volumes:
       - ./src:/app  
-      - ./uploads:/app/uploads
+      - ./src/uploads:/app/uploads
     environment:
       - FLASK_APP=app.py
       # - FLASK_ENV=development

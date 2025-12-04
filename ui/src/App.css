@@ -280,3 +280,55 @@ main.main-content {
     width: 16px;
     height: 16px;
 }
+
+/* --- Recherche (Dropdown) --- */
+.search-container {
+    position: relative;
+    /* La largeur est gérée par l'input .search-bar à l'intérieur */
+}
+
+/* On ajuste la barre existante si besoin */
+.search-bar {
+    width: 500px; /* Force la largeur ici si elle n'y est pas déjà */
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%; /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-top: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+.search-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+    background-color: var(--bg-card);
+}
+
+.search-dropdown-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+}

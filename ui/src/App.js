@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import api from './services/api';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -89,23 +89,101 @@ function MainLayout({ children }) {
 
 // Composant principal de l'App
 function AppContent() {
-  useLucideIcons(); // Active le hook pour les icônes
+  useLucideIcons();
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  // --- LOGIQUE DE RECHERCHE ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // Effet pour la recherche avec délai (Debounce intégré ici)
+  useEffect(() => {
+    // Si on a moins de 3 caractères, on ne cherche pas
+    if (searchQuery.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    const timerId = setTimeout(async () => {
+      try {
+        // On appelle NOTRE backend sur les threads existants
+        const response = await api.get(`/api/threads?search=${searchQuery}`);
+        setSearchResults(response.data);
+        setShowResults(true);
+      } catch (error) {
+        console.error("Erreur recherche:", error);
+      }
+    }, 300); // Délai de 300ms
+
+    return () => clearTimeout(timerId);
+  }, [searchQuery]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
   };
 
-  const token = localStorage.getItem('token');
+  // Clic sur une suggestion : On va direct au sujet
+  const handleSelectResult = (threadId) => {
+    setSearchQuery(''); // On vide la barre
+    setShowResults(false);
+    navigate(`/threads/${threadId}`);
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e.key === 'Enter') {
+      setShowResults(false);
+      navigate(`/?search=${searchQuery}`);
+    }
+  };
 
   return (
+    // ... suite du code ...
     <div className="App">
       {/* 1. Barre de Navigation du Haut (inchangée) */}
       <nav className="top-nav">
         <div className="top-nav-content">
           <div className="top-nav-left">
             <Link to="/" className="hub-logo">GameHub</Link>
-            <input type="text" placeholder="Rechercher dans le Hub..." className="search-bar" />
+
+            {/* --- DEBUT BARRE DE RECHERCHE --- */}
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Rechercher un sujet..."
+                className="search-bar"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchSubmit}
+                onFocus={() => { if(searchResults.length > 0) setShowResults(true); }}
+                // Petit délai pour permettre le clic
+                onBlur={() => setTimeout(() => setShowResults(false), 200)}
+              />
+
+              {/* Liste déroulante */}
+              {showResults && searchResults.length > 0 && (
+                <div className="search-dropdown">
+                  {searchResults.map((thread) => (
+                    <div
+                      key={thread.id}
+                      className="search-dropdown-item"
+                      onClick={() => handleSelectResult(thread.id)}
+                    >
+                      {/* Image miniature si disponible */}
+                      {thread.game_image_url && (
+                        <img src={thread.game_image_url} alt="" />
+                      )}
+                      <span>{thread.title}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* --- FIN BARRE DE RECHERCHE --- */}
+
           </div>
           <div className="top-nav-right">
             <Link to="/create-thread" className="btn-create-subject">

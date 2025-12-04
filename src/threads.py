@@ -82,14 +82,17 @@ def create_thread():
 
 def get_all_threads():
     genre_filter = request.args.get('genre')
+    search_query = request.args.get('search')
 
     query = Thread.query
 
     if genre_filter:
         query = query.filter(Thread.genres.ilike(f'%{genre_filter}%'))
 
-    threads = query.order_by(Thread.created_at.desc()).all()
+    if search_query:
+        query = query.filter(Thread.title.ilike(f'%{search_query}%'))
 
+    threads = query.order_by(Thread.created_at.desc()).all()
     threads_data = []
     for thread in threads:
         author_avatar_filename = thread.author.avatar_url or 'default_avatar.png'
@@ -100,8 +103,7 @@ def get_all_threads():
             "author_username": thread.author.username,
             "author_avatar_url": author_avatar_filename,
             "created_at": thread.created_at.isoformat(),
-            "game_image_url": thread.game_image_url,
-            "genres": thread.genres
+            "game_image_url": thread.game_image_url
         })
     return jsonify(threads_data)
 

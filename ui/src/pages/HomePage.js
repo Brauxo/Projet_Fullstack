@@ -1,26 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 function HomePage() {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { themeName } = useParams(); // Récupère le thème depuis l'URL (si présent)
 
-  // Titre dynamique basé sur le thème
-  const title = themeName ? `Flux: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}` : "Sujets récents";
+  // 1. Récupération des paramètres (URL)
+  const { themeName } = useParams();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search');
 
+  // 2. Titre dynamique
+  let title = "Sujets récents";
+  if (themeName) {
+    title = `Flux: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`;
+  }
+  if (searchQuery) {
+    title = `Résultats pour : "${searchQuery}"`;
+  }
+
+  // 3. Chargement des données
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
       try {
-        // On prépare l'URL de base
+        // Construction de l'URL avec les paramètres
         let url = '/api/threads';
+        const params = new URLSearchParams();
 
-        // Si un thème est sélectionné, on l'ajoute comme paramètre de filtre
         if (themeName) {
-          // encodeURIComponent gère les espaces et caractères spéciaux (ex: "Action-Adventure")
-          url += `?genre=${encodeURIComponent(themeName)}`;
+          params.append('genre', themeName);
+        }
+        if (searchQuery) {
+          params.append('search', searchQuery);
+        }
+
+        // Si des paramètres existent, on les ajoute à l'URL
+        if (params.toString()) {
+          url += `?${params.toString()}`;
         }
 
         const response = await api.get(url);
@@ -38,8 +56,7 @@ function HomePage() {
     };
 
     fetchThreads();
-  }, [themeName]);
-
+  }, [themeName, searchQuery]); // Se redéclenche si le thème OU la recherche change
 
   if (loading) {
     return <h1 className="flux-title">Chargement...</h1>;
@@ -54,7 +71,6 @@ function HomePage() {
           threads.map((thread) => (
             <Link to={`/threads/${thread.id}`} key={thread.id} className="game-card">
 
-              {/* MODIFIÉ: Utilisation de la vraie image du jeu */}
               <div className="game-card-image">
                 <img
                   src={thread.game_image_url || `https://placehold.co/600x338/94a3b8/1a1d21?text=${thread.title.charAt(0)}`}
@@ -62,11 +78,9 @@ function HomePage() {
                 />
               </div>
 
-              {/* Contenu de la carte */}
               <div className="game-card-content">
                 <span className="game-card-title">{thread.title}</span>
                 <div className="game-card-meta">
-                  {/* J'adapte la méta pour afficher l'auteur, ce que ton API fournit */}
                   <span>
                     <img
                       src={`http://localhost:5000/uploads/${thread.author_avatar_url}`}
@@ -75,14 +89,12 @@ function HomePage() {
                     />
                     {thread.author_username}
                   </span>
-                  {/* TODO: Ajouter le nombre de réponses/vues quand l'API le fournira */}
-                  {/* <span><i data-lucide="message-circle"></i> 0</span> */}
                 </div>
               </div>
             </Link>
           ))
         ) : (
-          <p>Aucun sujet pour le moment.</p>
+          <p>Aucun sujet ne correspond à votre recherche.</p>
         )}
       </div>
     </div>
