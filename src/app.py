@@ -18,12 +18,10 @@ jwt = JWTManager(app)
 from models import User, Thread, Post
 from auth import register, login
 from users import get_user_profile, upload_avatar, get_public_user_profile, delete_user_profile
-from threads import create_thread, get_all_threads, get_thread_details, check_thread_exists, delete_thread, toggle_like_thread
+from threads import create_thread, get_all_threads, get_thread_details, check_thread_exists, delete_thread, toggle_like_thread, get_top_genres
 from posts import create_post_in_thread, update_post, delete_post
 from uploads import serve_upload
 from games import search_games
-
-
 
 @app.route('/api/hello')
 def hello_world():
@@ -69,6 +67,10 @@ def like_thread_route(thread_id):
 @jwt_required()
 def post_reply(thread_id):
     return create_post_in_thread(thread_id)
+
+@app.route('/api/genres/top', methods=['GET'])
+def top_genres():
+    return get_top_genres()
 
 @app.route('/api/posts/<int:post_id>', methods=['PUT']) # ou 'PATCH'
 @jwt_required()

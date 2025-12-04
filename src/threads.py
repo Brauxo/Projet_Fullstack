@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity
 from models import Thread, User, Post
 from extensions import db
 import requests
-
+from collections import Counter
 
 def create_thread():
     data = request.get_json()
@@ -81,8 +81,15 @@ def create_thread():
 
 
 def get_all_threads():
-    # ... (pas de changement ici) ...
-    threads = Thread.query.order_by(Thread.created_at.desc()).all()
+    genre_filter = request.args.get('genre')
+
+    query = Thread.query
+
+    if genre_filter:
+        query = query.filter(Thread.genres.ilike(f'%{genre_filter}%'))
+
+    threads = query.order_by(Thread.created_at.desc()).all()
+
     threads_data = []
     for thread in threads:
         author_avatar_filename = thread.author.avatar_url or 'default_avatar.png'
@@ -93,7 +100,8 @@ def get_all_threads():
             "author_username": thread.author.username,
             "author_avatar_url": author_avatar_filename,
             "created_at": thread.created_at.isoformat(),
-            "game_image_url": thread.game_image_url
+            "game_image_url": thread.game_image_url,
+            "genres": thread.genres
         })
     return jsonify(threads_data)
 
@@ -206,3 +214,20 @@ def toggle_like_thread(thread_id):
             "liked": True,
             "like_count": thread.liked_by.count()
         }), 200
+
+
+def get_top_genres():
+    threads = Thread.query.filter(Thread.genres.isnot(None)).all()
+
+    all_genres = []
+
+    for thread in threads:
+        if thread.genres:
+            # "Action, RPG" -> ["Action", "RPG"]
+            genres_list = [g.strip() for g in thread.genres.split(',')]
+            all_genres.extend(genres_list)
+
+    top_genres_counts = Counter(all_genres).most_common(10)
+    top_genres_names = [genre[0] for genre in top_genres_counts]
+
+    return jsonify(top_genres_names)

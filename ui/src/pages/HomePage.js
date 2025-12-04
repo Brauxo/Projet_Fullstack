@@ -11,16 +11,23 @@ function HomePage() {
   const title = themeName ? `Flux: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}` : "Sujets récents";
 
   useEffect(() => {
-    // On pourrait filtrer les threads par thème ici plus tard
-    // Pour l'instant, on charge tout
     const fetchThreads = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/api/threads');
+        // On prépare l'URL de base
+        let url = '/api/threads';
+
+        // Si un thème est sélectionné, on l'ajoute comme paramètre de filtre
+        if (themeName) {
+          // encodeURIComponent gère les espaces et caractères spéciaux (ex: "Action-Adventure")
+          url += `?genre=${encodeURIComponent(themeName)}`;
+        }
+
+        const response = await api.get(url);
+
         if (Array.isArray(response.data)) {
           setThreads(response.data);
         } else if (response.data && Array.isArray(response.data.threads)) {
-          // Au cas où l'API renverrait { threads: [...] }
           setThreads(response.data.threads);
         }
         setLoading(false);
@@ -31,7 +38,8 @@ function HomePage() {
     };
 
     fetchThreads();
-  }, [themeName]); // Se redéclenche si le thème change
+  }, [themeName]);
+
 
   if (loading) {
     return <h1 className="flux-title">Chargement...</h1>;

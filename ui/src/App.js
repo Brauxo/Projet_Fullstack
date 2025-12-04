@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import api from './services/api';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -24,15 +25,50 @@ function useLucideIcons() {
 
 // Composant pour la barre latérale (Sidebar) (inchangé)
 function Sidebar() {
+  const [genres, setGenres] = useState([]);
+
+  // 1. Récupérer le Top 10 des genres au chargement du composant
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await api.get('/api/genres/top');
+        setGenres(response.data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des genres:", error);
+      }
+    };
+    fetchGenres();
+  }, []);
+
+  // 2. Petit hack : Rafraîchir les icônes Lucide quand la liste change
+  // Car les nouveaux éléments <i> sont ajoutés dynamiquement au DOM
+  useEffect(() => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }, [genres]);
+
   return (
     <aside className="sidebar">
-        <h3 className="sidebar-title">Thèmes</h3>
+        <h3 className="sidebar-title">Genres Populaires</h3>
         <ul className="theme-list">
-            <li><Link to="/theme/fortnite" className="theme-link active"><i data-lucide="flame"></i><span>Fortnite</span></Link></li>
-            <li><Link to="/theme/valorant" className="theme-link"><i data-lucide="sword"></i><span>Valorant</span></Link></li>
-            <li><Link to="/theme/lol" className="theme-link"><i data-lucide="shield"></i><span>League of Legends</span></Link></li>
-            <li><Link to="/theme/general" className="theme-link"><i data-lucide="message-square"></i><span>Général</span></Link></li>
-            <li><Link to="/theme/lfg" className="theme-link"><i data-lucide="users"></i><span>Recherche d'Équipe</span></Link></li>
+            {/* Lien pour tout afficher */}
+            <li>
+              <Link to="/" className="theme-link">
+                <i data-lucide="layout-grid"></i>
+                <span>Tout</span>
+              </Link>
+            </li>
+
+            {/* Génération dynamique des liens par genre */}
+            {genres.map((genre) => (
+              <li key={genre}>
+                <Link to={`/theme/${genre}`} className="theme-link">
+                  <i data-lucide="gamepad-2"></i>
+                  <span>{genre}</span>
+                </Link>
+              </li>
+            ))}
         </ul>
     </aside>
   );
