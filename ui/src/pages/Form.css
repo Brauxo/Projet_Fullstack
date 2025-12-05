@@ -1,0 +1,99 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: calc(100vh - 64px); 
+  background-color: var(--bg-primary);
+}
+
+.form-card {
+  background-color: var(--bg-secondary);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px var(--accent-blue); 
+  width: 100%;
+  max-width: 420px;
+}
+
+.form-card h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-blue); 
+  box-shadow: 0 0 0 2px var(--accent-blue); 
+}
+
+.form-button {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--accent-blue); 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-button:hover {
+  background-color: #7c51dd; 
+}
+
+.form-message {
+  text-align: center;
+  margin-top: 1rem;
+  color: #dc3545; 
+}
+
+.form-message.success {
+  color: #28a745; 
+}
+
+.form-switch-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.form-switch-link a {
+  color: var(--accent-blue); 
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.form-switch-link a:hover {
+  text-decoration: underline;
+}

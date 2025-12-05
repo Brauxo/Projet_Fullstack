@@ -1,0 +1,80 @@
+@import './Form.css';
+
+.search-results-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: -0.75rem; 
+  position: relative;
+  z-index: 10;
+}
+
+.search-result-item {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: var(--bg-card); 
+}
+
+.search-result-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.selected-game-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  background: var(--bg-primary); 
+  padding: 10px;
+  border-radius: 8px;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.selected-game-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.selected-game-info {
+  flex-grow: 1;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-button.button-danger {
+  background-color: #dc3545; 
+  width: auto; 
+  flex-shrink: 0; 
+}
+.form-button.button-danger:hover {
+  background-color: #c82333;
+}
+
+.form-group textarea.form-input {
+  min-height: 120px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+
+.form-message.info {
+  color: var(--text-secondary);
+}

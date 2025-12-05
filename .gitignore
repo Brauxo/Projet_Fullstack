@@ -3,6 +3,7 @@ venv/
 __pycache__/
 *.pyc
 .env
+.venv
 
 # Node
 ui/node_modules/
@@ -16,3 +17,5 @@ Thumbs.db
 
 # Post gre data
 /data/
+
+/uploads/

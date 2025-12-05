@@ -8,9 +8,11 @@ services:
       - "5000:5000"
     volumes:
       - ./src:/app  
+      - ./src/uploads:/app/uploads
     environment:
       - FLASK_APP=app.py
-      # - FLASK_ENV=development 
+      # - FLASK_ENV=development
+      - RAWG_API_KEY=${RAWG_API_KEY}
       - FLASK_DEBUG=1 # A commenter plus tard quand go prod
     depends_on:
       - db 
