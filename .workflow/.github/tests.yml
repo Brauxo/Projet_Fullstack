@@ -1,0 +1,31 @@
+name: Flask Unit Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run the tests with pytest
+      env:
+        RAWG_API_KEY: "dummy_key_for_ci"
+        SECRET_KEY: "dummy_secret_for_ci"
+      run: |
+        pytest -v tests/

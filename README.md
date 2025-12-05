@@ -169,7 +169,18 @@ Le frontend est généré avec `Create React App`.
 * `src/services/api.js` : Configuration d'Axios avec un intercepteur pour injecter automatiquement le token JWT dans les headers.
 * `src/App.css` : Styles globaux (thème sombre par défaut).
 
-### 4 - Continuer le projet
+### 4 - Pour les tests
+``` bash
+# Lancer les tests
+pytest -v
+```
+``` bash
+# Lancer les tests via docker
+docker compose exec backend pytest
+```
+
+
+### 5 - Continuer le projet
 
 Pistes d'amélioration :
 * **Sécurité** : Passer en HTTPS et stocker les tokens dans des cookies `HttpOnly` plutôt que le `localStorage`.
