@@ -1,4 +1,4 @@
-name: Flask Unit Tests
+name: GameHub CI
 
 on:
   push:
@@ -25,7 +25,10 @@ jobs:
 
     - name: Run the tests with pytest
       env:
+        FLASK_APP: src/app.py
+        FLASK_ENV: testing
         RAWG_API_KEY: "dummy_key_for_ci"
         SECRET_KEY: "dummy_secret_for_ci"
+        PYTHONPATH: src
       run: |
-        pytest -v tests/
+        pytest -v src/tests/
