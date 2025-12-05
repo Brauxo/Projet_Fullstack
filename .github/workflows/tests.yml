@@ -29,6 +29,7 @@ jobs:
         FLASK_ENV: testing
         RAWG_API_KEY: "dummy_key_for_ci"
         SECRET_KEY: "dummy_secret_for_ci"
+        DATABASE_URL: "sqlite:///:memory:"
         PYTHONPATH: src
       run: |
         pytest -v src/tests/
