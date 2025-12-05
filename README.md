@@ -170,6 +170,17 @@ Le frontend est généré avec `Create React App`.
 * `src/App.css` : Styles globaux (thème sombre par défaut).
 
 ### 4 - Pour les tests
+
+⚠️ NOTE IMPORTANTE SUR LA BASE DE DONNÉES ⚠️
+Les tests sont configurés pour utiliser une base de données SQLite en mémoire afin de ne pas toucher à vos données. Cependant, en cas de mauvaise configuration ou d'exécution locale incorrecte, il peut arriver que l'application bascule sur cette base vide ou réinitialise la base principale.
+Si votre application semble vide après avoir lancé les tests :
+Cela signifie que la base de données a été réinitialisée ou que l'application pointe temporairement vers SQLite.
+Pour corriger cela, assurez-vous de relancer le conteneur backend : docker compose restart backend.
+Relancez impérativement le script de remplissage pour retrouver vos données :
+``` bash
+docker compose exec backend python seed_db.py
+```
+
 ``` bash
 # Lancer les tests
 pytest -v
