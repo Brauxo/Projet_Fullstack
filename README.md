@@ -10,8 +10,8 @@ Il y a des balises html dans ce fichier, s'il y a un problème d'affichage, essa
 </div>
 
 ![Static Badge](https://img.shields.io/badge/ESIEE%20Paris%20-%20Projet%20FullStack%20-%20orangered?style=flat)
-![GitHub last commit](https://img.shields.io/github/last-commit/votre-nom/GameHub)
-![GitHub repo size](https://img.shields.io/github/repo-size/votre-nom/GameHub)
+![GitHub last commit](https://img.shields.io/github/last-commit/Brauxo/Projet_Fullstack)
+![GitHub repo size](https://img.shields.io/github/repo-size/Brauxo/Projet_Fullstack)
 
 ### 🛠 Outils : 
 | **Backend** | **Frontend** | **Full Stack** |
@@ -27,12 +27,9 @@ Le backend est développé avec **Flask** en Python, utilisant une base de donn�
 
 Le frontend est construit avec **React** en JavaScript, assurant une interface fluide et réactive. La sécurité est gérée via des **JWT (JSON Web Tokens)**.
 
-### 👁 Résultat du projet
+### Apercu du projet
 
-*(Insérez ici un GIF ou une capture d'écran de votre application si disponible)*
-
-![demo](https://placehold.co/600x400?text=Demo+Placeholder)
-
+![demo.gif](images/demo.gif)
 <hr>
 
 ## Table des matières
@@ -51,6 +48,7 @@ Le frontend est construit avec **React** en JavaScript, assurant une interface f
 ### Contexte et Retours d'expérience
 1) [Pourquoi ce projet](#1---pourquoi-ce-projet) 
 2) [Difficultés rencontrées](#2---difficultés-rencontrées) 
+3) [Usage de l'IA](#3---usage-de-lia)
 
 <hr>
 
@@ -69,12 +67,10 @@ Faites une installation classique.
 Ce projet utilise l'API **RAWG** pour récupérer les données des jeux
 vidéo. La clé API ne doit pas être commise dans le code.
 
-1.  Récupérez votre clé API (fournie avec le rendu ou gratuite sur
+1.  Récupérez votre clé API (fournie avec le rendu sous format d'un fichier .env ou gratuite sur
     [RAWG.io](https://rawg.io/apidocs)).
-2.  À la racine du projet, trouvez le fichier **`.env.example`**.
-3.  Renommez-le simplement en **`.env`** (ou faites-en une copie nommée
-    `.env`).
-4.  Ouvrez ce fichier `.env` et remplacez la valeur par votre clé :
+2.  À la racine du projet doit se trouver un fichier **`.env`**.
+3.  Ce fichier doit contenir la valeur de la clé API sous ce format :
     `env     RAWG_API_KEY=votre_vraie_clé_ici`
 
 ### 3 - Lancer et Initialiser le projet
@@ -96,8 +92,6 @@ $ cd chemin/vers/le/projet
 Remove-Item -Recurse -Force data
 ```
 
-(Si le dossier n'existe pas ou si c'est la première fois, ignorez cette
-étape).
 
 2.  Lancement des conteneurs\
     Construisez et démarrez les services :
@@ -123,7 +117,7 @@ Une fois le script terminé, ouvrez votre navigateur à l'adresse :
 
 ### 4 - Utiliser l'application Web
 
-⚠ **Note :** La base de données est vide au lancement. Vous devrez créer un premier compte utilisateur.
+⚠ **Note :** La base de données est vide au lancement si le script de remplissage n'a pas été exécuté. Vous devrez créer un premier compte utilisateur.
 
 Le réseau social **GameHub** permet de :
 * **S'inscrire / Se connecter** : Gestion complète de l'authentification.
@@ -151,6 +145,8 @@ L'application suit une architecture **Full Stack** séparée :
 * **Frontend** : SPA (Single Page Application) React sur le port 3000.
 * **Database** : Conteneur PostgreSQL sur le port 5432.
 
+![archi.png](images%2Farchi.png)
+
 ### 2 - Backend (Flask)
 
 Le backend est structuré de manière modulaire dans le dossier `src/` :
@@ -172,8 +168,11 @@ Le frontend est généré avec `Create React App`.
 ### 4 - Pour les tests
 
 ⚠️ NOTE IMPORTANTE SUR LA BASE DE DONNÉES ⚠️
+
 Les tests sont configurés pour utiliser une base de données SQLite en mémoire afin de ne pas toucher à vos données. Cependant, en cas de mauvaise configuration ou d'exécution locale incorrecte, il peut arriver que l'application bascule sur cette base vide ou réinitialise la base principale.
+
 Si votre application semble vide après avoir lancé les tests :
+
 Cela signifie que la base de données a été réinitialisée ou que l'application pointe temporairement vers SQLite.
 Pour corriger cela, assurez-vous de relancer le conteneur backend : docker compose restart backend.
 Relancez impérativement le script de remplissage pour retrouver vos données :
@@ -194,9 +193,10 @@ docker compose exec backend pytest
 ### 5 - Continuer le projet
 
 Pistes d'amélioration :
-* **Sécurité** : Passer en HTTPS et stocker les tokens dans des cookies `HttpOnly` plutôt que le `localStorage`.
+* **Sécurité** : Passer en HTTPS et stocker les tokens dans des cookies `HttpOnly` plutôt que le `localStorage` pour lutter contre failles XSS.
 * **Fonctionnalités** : Ajouter un système de "Follow" entre utilisateurs (la base est là avec les profils).
 * **Performance** : Mettre en cache les requêtes vers RAWG pour limiter les appels API externes.
+
 
 <hr>
 
@@ -214,5 +214,15 @@ Nous avons opté pour un **réseau social de gaming** car il permettait de combi
 * **Gestion des images** : Nous avons mis en place un système d'upload d'avatars stockés localement dans le dossier `uploads/` et servis statiquement par Flask (`send_from_directory`), ce qui a demandé une configuration spécifique des volumes Docker.
 * **Relations SQL** : La mise en place de la table d'association pour les "Likes" (`thread_likes`) et la gestion des cascades (supprimer un user supprime ses posts) a nécessité une attention particulière avec SQLAlchemy.
 * **React & Asynchronicité** : Gérer les états de chargement lors des appels à l'API RAWG (barre de recherche avec debounce) a été un bon exercice de gestion d'état frontend.
+
+### 3 - Usage de l'IA
+Nous avons choisi d'intégrer l'IA générative comme un véritable **assistant de productivité** au quotidien, plutôt que comme un simple générateur de code.
+
+*   **Un accélérateur sur l'UI** : C'est sur le Frontend que le gain de temps a été le plus flagrant. En lui confiant l'écriture du code répétitif (la structure des composants React, les bases du CSS), nous avons pu consacrer notre énergie à ce qui compte vraiment : l'expérience utilisateur et la logique.
+    
+*   **Un binôme pour le Debug** : Face à un bug tenace, l'IA nous a servi de 'second regard'. Elle a été précieuse pour analyser rapidement des logs complexes ou nous suggérer des syntaxes plus élégantes (comme les _list comprehensions_ en Python).
+    
+*   **L'humain garde le contrôle** : L'IA n'a pas la science infuse. Nous avons systématiquement relu et testé son code, écartant ses hallucinations pour ne garder que ce qui respectait strictement notre architecture Flask/PostgreSQL
+
 
 Merci du temps que vous avez consacré à cette lecture.
