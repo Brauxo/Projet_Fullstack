@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import api from './services/api';
+//Pages
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -8,9 +9,9 @@ import ThreadPage from './pages/ThreadPage';
 import CreateThreadPage from './pages/CreateThreadPage';
 import ProfilePage from './pages/ProfilePage';
 import { ApiInterceptor } from './services/api';
-import './App.css'; // On importe notre nouveau CSS
+import './App.css';
 
-// Hook pour rafraîchir les icônes Lucide (inchangé)
+// Raffraichir page pour les icones lucide
 function useLucideIcons() {
   const location = useLocation();
   useEffect(() => {
@@ -23,11 +24,9 @@ function useLucideIcons() {
   }, [location.pathname]);
 }
 
-// Composant pour la barre latérale (Sidebar) (inchangé)
 function Sidebar() {
   const [genres, setGenres] = useState([]);
 
-  // 1. Récupérer le Top 10 des genres au chargement du composant
   useEffect(() => {
     const fetchGenres = async () => {
       try {
@@ -40,8 +39,7 @@ function Sidebar() {
     fetchGenres();
   }, []);
 
-  // 2. Petit hack : Rafraîchir les icônes Lucide quand la liste change
-  // Car les nouveaux éléments <i> sont ajoutés dynamiquement au DOM
+
   useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
@@ -52,7 +50,6 @@ function Sidebar() {
     <aside className="sidebar">
         <h3 className="sidebar-title">Genres Populaires</h3>
         <ul className="theme-list">
-            {/* Lien pour tout afficher */}
             <li>
               <Link to="/" className="theme-link">
                 <i data-lucide="layout-grid"></i>
@@ -60,7 +57,6 @@ function Sidebar() {
               </Link>
             </li>
 
-            {/* Génération dynamique des liens par genre */}
             {genres.map((genre) => (
               <li key={genre}>
                 <Link to={`/theme/${genre}`} className="theme-link">
@@ -74,8 +70,6 @@ function Sidebar() {
   );
 }
 
-// NOUVEAU : On crée un composant de Layout
-// Il contient la sidebar et le conteneur principal
 function MainLayout({ children }) {
   return (
     <div className="main-layout">
@@ -87,21 +81,17 @@ function MainLayout({ children }) {
   );
 }
 
-// Composant principal de l'App
 function AppContent() {
   useLucideIcons();
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  // --- LOGIQUE DE RECHERCHE ---
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
 
-  // Effet pour la recherche avec délai (Debounce intégré ici)
   useEffect(() => {
-    // Si on a moins de 3 caractères, on ne cherche pas
     if (searchQuery.length < 3) {
       setSearchResults([]);
       return;
@@ -109,14 +99,13 @@ function AppContent() {
 
     const timerId = setTimeout(async () => {
       try {
-        // On appelle NOTRE backend sur les threads existants
         const response = await api.get(`/api/threads?search=${searchQuery}`);
         setSearchResults(response.data);
         setShowResults(true);
       } catch (error) {
         console.error("Erreur recherche:", error);
       }
-    }, 300); // Délai de 300ms
+    }, 300); // Délai
 
     return () => clearTimeout(timerId);
   }, [searchQuery]);
@@ -126,9 +115,8 @@ function AppContent() {
     window.location.href = '/login';
   };
 
-  // Clic sur une suggestion : On va direct au sujet
   const handleSelectResult = (threadId) => {
-    setSearchQuery(''); // On vide la barre
+    setSearchQuery('');
     setShowResults(false);
     navigate(`/threads/${threadId}`);
   };
@@ -141,15 +129,12 @@ function AppContent() {
   };
 
   return (
-    // ... suite du code ...
     <div className="App">
-      {/* 1. Barre de Navigation du Haut (inchangée) */}
       <nav className="top-nav">
         <div className="top-nav-content">
           <div className="top-nav-left">
             <Link to="/" className="hub-logo">GameHub</Link>
 
-            {/* --- DEBUT BARRE DE RECHERCHE --- */}
             <div className="search-container">
               <input
                 type="text"
@@ -159,11 +144,9 @@ function AppContent() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearchSubmit}
                 onFocus={() => { if(searchResults.length > 0) setShowResults(true); }}
-                // Petit délai pour permettre le clic
                 onBlur={() => setTimeout(() => setShowResults(false), 200)}
               />
 
-              {/* Liste déroulante */}
               {showResults && searchResults.length > 0 && (
                 <div className="search-dropdown">
                   {searchResults.map((thread) => (
@@ -172,7 +155,6 @@ function AppContent() {
                       className="search-dropdown-item"
                       onClick={() => handleSelectResult(thread.id)}
                     >
-                      {/* Image miniature si disponible */}
                       {thread.game_image_url && (
                         <img src={thread.game_image_url} alt="" />
                       )}
@@ -182,7 +164,6 @@ function AppContent() {
                 </div>
               )}
             </div>
-            {/* --- FIN BARRE DE RECHERCHE --- */}
 
           </div>
           <div className="top-nav-right">
@@ -206,16 +187,12 @@ function AppContent() {
         </div>
       </nav>
 
-      {/* 2. Contenu Principal (MODIFIÉ) */}
-      {/* Le layout (sidebar + main) est maintenant géré par les routes.
-        On retire les div .main-layout et .main-content d'ici.
-      */}
       <Routes>
-        {/* Ces routes utiliseront le MainLayout (avec sidebar) */}
+        {/* Routes sidebar */}
         <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
         <Route path="/theme/:themeName" element={<MainLayout><HomePage /></MainLayout>} />
 
-        {/* Ces routes seront en pleine largeur (pas de sidebar) */}
+        {/* Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/threads/:id" element={<ThreadPage />} />
@@ -227,7 +204,6 @@ function AppContent() {
   );
 }
 
-// Wrapper global (inchangé)
 function App() {
   return (
     <Router>

@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-
-// Importer le fichier CSS
 import './ThreadPage.css';
-
-// SUPPRIMÉ : On enlève l'import qui causait le crash
-// import { ArrowLeft } from 'lucide-react';
 
 function ThreadPage() {
   const { id } = useParams();
@@ -20,8 +15,6 @@ function ThreadPage() {
   const [editingContent, setEditingContent] = useState('');
 
   const navigate = useNavigate();
-
-  // --- TOUTES LES FONCTIONS DE LOGIQUE SONT CONSERVÉES (inchangées) ---
 
   const fetchThread = useCallback(async () => {
     try {
@@ -49,7 +42,7 @@ function ThreadPage() {
     fetchCurrentUser();
   }, [fetchThread, fetchCurrentUser]);
 
-  // UseEffect pour les icônes (corrigé)
+  // UseEffect pour les icônes
   useEffect(() => {
     if (!loading && window.lucide) {
       window.lucide.createIcons();
@@ -130,9 +123,6 @@ function ThreadPage() {
     }
   };
 
-  // --- FIN DE LA LOGIQUE ---
-
-
   if (loading) {
     return <div>Chargement du sujet...</div>;
   }
@@ -145,19 +135,17 @@ function ThreadPage() {
   const originalPost = thread.posts?.[0];
   const replies = thread.posts?.slice(1) || [];
 
-  // --- DÉBUT DU JSX ---
   return (
     <div className="thread-page-container">
 
       <div className="thread-header-wrapper">
 
-        {/* Bouton "Retour" (corrigé pour utiliser la balise <i>) */}
+        {/* Bouton "Retour" */}
         <Link to="/" className="back-link">
           <i data-lucide="arrow-left" style={{ width: 18, height: 18 }}></i>
           Retour à l'accueil
         </Link>
 
-        {/* SECTION 1: L'EN-TÊTE DU JEU */}
         <div className="game-header">
           <h2>{thread.title}</h2>
           <div className="header-actions">
@@ -179,7 +167,6 @@ function ThreadPage() {
           </div>
         </div>
 
-        {/* SECTION 2: INFOS PRINCIPALES (2 colonnes) */}
         <div className="game-main-info">
           <div className="game-image-column">
             {thread.game_image_url && (
@@ -225,7 +212,6 @@ function ThreadPage() {
           </div>
         </div>
 
-        {/* SECTION 3: DESCRIPTION DU JEU */}
         {thread.game_description && (
           <div className="game-description">
             <h3>À propos du jeu</h3>
@@ -237,11 +223,9 @@ function ThreadPage() {
       <div className="thread-discussion-wrapper">
         <hr className="section-divider" />
 
-        {/* SECTION 4: DISCUSSIONS */}
         <div className="discussion-section">
           <h3>Discussions</h3>
 
-          {/* 4a. Le Post Original (OP) */}
           {originalPost && (() => {
             const isOriginalPostAuthor = currentUser && originalPost.author_id === currentUser.id;
             const isEditingOriginalPost = editingPost && editingPost.id === originalPost.id;
@@ -289,11 +273,9 @@ function ThreadPage() {
             );
           })()}
 
-          {/* 4b. La liste des réponses */}
           <h4 className="replies-header">Réponses</h4>
           <div className="replies-list">
 
-            {/* --- CORRECTION DE LA LOGIQUE ICI --- */}
 
             {replies.length > 0 ? (
               // S'il y a des réponses, on les affiche
@@ -355,11 +337,9 @@ function ThreadPage() {
               </>
             )}
 
-            {/* --- FIN DE LA CORRECTION --- */}
 
           </div>
 
-          {/* 4c. Le formulaire pour répondre */}
           {!editingPost && (
             <form className="reply-form" onSubmit={handleReplySubmit}>
               <h3>Participer à la discussion</h3>

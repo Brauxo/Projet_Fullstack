@@ -1,7 +1,6 @@
 from extensions import db
 import datetime
 
-# Table d'association pour les likes de sujets (threads)
 thread_likes = db.Table('thread_likes',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
     db.Column('thread_id', db.Integer, db.ForeignKey('threads.id'), primary_key=True)
@@ -16,22 +15,25 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    avatar_url = db.Column(db.String(255), nullable=True)
 
     # Forum relationships
-    threads = db.relationship('Thread', backref='author', lazy=True, cascade="all, delete-orphan")
+    threads = db.relationship('Thread', backref='author', lazy=True, cascade="all, delete-orphan") #suppression en cascade
     posts = db.relationship('Post', backref='author', lazy=True, cascade="all, delete-orphan")
 
     # Relation pour les sujets (threads) likés
     liked_threads = db.relationship('Thread', secondary=thread_likes, lazy='dynamic',
                                     backref=db.backref('liked_by', lazy='dynamic'))
 
-    avatar_url = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
 
 
 class Thread(db.Model):
+    """
+        Représente un sujet de discussion sur un jeu.
+    """
     __tablename__ = 'threads'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)  # Sera le nom du jeu
@@ -43,19 +45,14 @@ class Thread(db.Model):
     rawg_game_id = db.Column(db.Integer, unique=True, index=True, nullable=True)
     game_image_url = db.Column(db.String(255), nullable=True)
     game_description = db.Column(db.Text, nullable=True)
-
-    # --- NOUVEAUX CHAMPS DE JEU ---
     metacritic = db.Column(db.Integer, nullable=True)
-    released = db.Column(db.String(50), nullable=True) # Date de sortie
+    released = db.Column(db.String(50), nullable=True)
     website = db.Column(db.String(255), nullable=True)
-    # On va stocker les genres et plateformes comme du texte simple
     genres = db.Column(db.Text, nullable=True)
     platforms = db.Column(db.Text, nullable=True)
-    # --- FIN DES NOUVEAUX CHAMPS ---
 
     def __repr__(self):
         return f'<Thread {self.title}>'
-
 
 class Post(db.Model):
     __tablename__ = 'posts'

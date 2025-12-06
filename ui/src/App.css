@@ -1,11 +1,7 @@
 :root {
-    /* MODIFIÉ : Fond principal plus profond */
     --bg-primary: #111111;
-
-    /* MODIFIÉ : Fond secondaire (barre du haut, cartes) */
     --bg-secondary: #1f1f1f;
 
-    /* MODIFIÉ : Fond des cartes (un peu plus clair que le secondaire) */
     --bg-card: #2c313a;
 
     --border-color: #3b414c;
@@ -15,7 +11,7 @@
     --accent-blue: #8a5cf6;
 }
 
-/* --- Layout Principal --- */
+
 .App {
   min-height: 100vh;
 }
@@ -28,14 +24,14 @@
     background-color: var(--bg-primary);
 }
 
-/* NOUVEAU: Conteneur pour centrer le contenu de la nav */
+/*  Conteneur pour centrer le contenu de la nav */
 .top-nav-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 100%;
     width: 100%;
-    max-width: 1536px; /* Correspond au max-width de .main-layout */
+    max-width: 1536px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
@@ -43,7 +39,6 @@
 .top-nav-left {
     display: flex;
     align-items: center;
-    /* MODIFIÉ : Espace augmenté */
     gap: 2rem;
 }
 
@@ -58,10 +53,8 @@
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    /* MODIFIÉ : Style "pillule" */
     border-radius: 9999px;
     padding: 8px 16px;
-    /* MODIFIÉ : Barre plus large */
     width: 500px;
 }
 .search-bar::placeholder {
@@ -76,7 +69,7 @@
 .top-nav-right {
     display: flex;
     align-items: center;
-    gap: 1rem; /* gap-4 */
+    gap: 1rem;
 }
 
 .nav-link {
@@ -111,7 +104,7 @@
     transition: background-color 0.2s ease;
 }
 .btn-create-subject:hover {
-    background-color: #2563eb; /* Un bleu un peu plus foncé */
+    background-color: #2563eb;
 }
 .btn-create-subject svg {
     width: 16px;
@@ -135,24 +128,20 @@
 }
 
 
-/* --- Conteneur Principal --- */
+/* Conteneur Principal  */
 .main-layout {
     display: flex;
-    margin: 1rem auto 0 auto; /* Pour garder la marge du haut, mais pousser le contenu à droite */
-    margin-right: 0; /* Assure que le côté droit va jusqu'au bord */
+    margin: 1rem auto 0 auto;
+    margin-right: 0;
 }
 
-/* --- Barre latérale (Thèmes) --- */
+/* Barre latérale (Thèmes) */
 .sidebar {
-    /* MODIFIÉ : Suppression de la bordure */
-    /* border-right: 1px solid var(--border-color); */
-
     width: 240px;
     flex-shrink: 0;
-    padding: 1rem; /* p-4 */
+    padding: 1rem;
 
-    /* NOUVEAU : Hauteur minimale pour remplir l'écran */
-    min-height: calc(100vh - 64px - 1rem); /* 100vh - hauteur_nav - margin_top_main_layout */
+    min-height: calc(100vh - 64px - 1rem);
     height: fit-content;
 }
 .sidebar-title {
@@ -165,7 +154,7 @@
     margin-bottom: 0.5rem;
 }
 
-/* NOUVEAU : Style pour la liste des thèmes */
+/* Style pour la liste des thèmes */
 .theme-list {
     list-style-type: none;
     padding: 0;
@@ -196,7 +185,7 @@
     flex-shrink: 0;
 }
 
-/* --- Contenu Principal (Flux) --- */
+/* Contenu Principal  */
 main.main-content {
     flex-grow: 1;
     padding: 0 2rem;
@@ -209,10 +198,9 @@ main.main-content {
     margin-bottom: 1.5rem;
 }
 
-/* --- Grille de Jeux --- */
+/* Grille de Jeux */
 .game-grid {
     display: grid;
-    /* MODIFIÉ : Grille responsive (cartes 1.5x plus larges) */
     grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
     gap: 1.5rem;
 }
@@ -234,8 +222,8 @@ main.main-content {
 .game-card-image {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* Ratio 16:9 */
-    background-color: var(--bg-secondary); /* Fond pendant le chargement */
+    padding-top: 56.25%;
+    background-color: var(--bg-secondary);
 }
 .game-card-image img {
     position: absolute;
@@ -281,20 +269,19 @@ main.main-content {
     height: 16px;
 }
 
-/* --- Recherche (Dropdown) --- */
+/* Recherche  */
 .search-container {
     position: relative;
-    /* La largeur est gérée par l'input .search-bar à l'intérieur */
 }
 
 /* On ajuste la barre existante si besoin */
 .search-bar {
-    width: 500px; /* Force la largeur ici si elle n'y est pas déjà */
+    width: 500px;
 }
 
 .search-dropdown {
     position: absolute;
-    top: 100%; /* Juste en dessous de l'input */
+    top: 100%;
     left: 0;
     width: 100%;
     background-color: var(--bg-secondary);

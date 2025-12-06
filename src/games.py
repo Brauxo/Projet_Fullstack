@@ -4,8 +4,10 @@ import requests
 
 def search_games():
     """
-    Route pour rechercher des jeux en utilisant l'API RAWG.io.
-    Prend un paramètre 'q' dans l'URL (ex: /api/games/search?q=cyberpunk)
+    Recherche de jeux.
+    Récupère texte de la barre de recherche (paramètre 'q'),
+    puis demande à l'API de RAWG de trouver les jeux correspondants
+    Renvoie une liste simplifiée (juste nom, image, id) pour l'affichage.
     """
     query = request.args.get('q')
     if not query:
@@ -13,8 +15,7 @@ def search_games():
 
     api_key = current_app.config.get('RAWG_API_KEY')
     if not api_key:
-        # Assure-toi d'avoir RAWG_API_KEY dans ton src/config.py
-        return jsonify({"message": "Clé API RAWG non configurée"}), 500
+        return jsonify({"message": "Clé API RAWG manquante"}), 500
 
     try:
         params = {
@@ -27,15 +28,15 @@ def search_games():
 
         data = response.json()
 
-        simplified_results = []
+        results = []
         for game in data.get('results', []):
-            simplified_results.append({
+            results.append({
                 "id": game.get('id'),
                 "name": game.get('name'),
                 "background_image": game.get('background_image')
             })
 
-        return jsonify(simplified_results)
+        return jsonify(results)
 
-    except requests.exceptions.RequestException as e:
-        return jsonify({"message": f"Erreur lors de la communication avec l'API RAWG: {e}"}), 500
+    except Exception as e:
+        return jsonify({"message": f"RAWG API Error: {str(e)}"}), 500

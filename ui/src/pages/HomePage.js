@@ -6,12 +6,12 @@ function HomePage() {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Récupération des paramètres (URL)
+  // Récupération des paramètres (URL)
   const { themeName } = useParams();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
 
-  // 2. Titre dynamique
+  // Titre dynamique
   let title = "Sujets récents";
   if (themeName) {
     title = `Flux: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`;
@@ -20,12 +20,11 @@ function HomePage() {
     title = `Résultats pour : "${searchQuery}"`;
   }
 
-  // 3. Chargement des données
+  // Chargement des données
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
       try {
-        // Construction de l'URL avec les paramètres
         let url = '/api/threads';
         const params = new URLSearchParams();
 
@@ -35,8 +34,7 @@ function HomePage() {
         if (searchQuery) {
           params.append('search', searchQuery);
         }
-
-        // Si des paramètres existent, on les ajoute à l'URL
+        //ajout parametre url
         if (params.toString()) {
           url += `?${params.toString()}`;
         }
@@ -56,7 +54,7 @@ function HomePage() {
     };
 
     fetchThreads();
-  }, [themeName, searchQuery]); // Se redéclenche si le thème OU la recherche change
+  }, [themeName, searchQuery]);
 
   if (loading) {
     return <h1 className="flux-title">Chargement...</h1>;

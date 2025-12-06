@@ -1,5 +1,4 @@
 from flask import request, jsonify, current_app
-# MODIFIÉ : On retire 'NoAuthorizationError' POUR DE BON
 from flask_jwt_extended import get_jwt_identity
 from models import Thread, User, Post
 from extensions import db
@@ -7,6 +6,12 @@ import requests
 from collections import Counter
 
 def create_thread():
+    """
+        Creation sujet discussion
+        Logique : Si le sujet existe déjà pour ce jeu (via rawg_game_id)
+        on ne le duplique pas, on ajoute juste le post à la suite
+        else on utilise l'API RAWG pour récupérer les données du jeu
+    """
     data = request.get_json()
     rawg_game_id = data.get('rawg_game_id')
     content = data.get('content')
@@ -37,7 +42,6 @@ def create_thread():
             response.raise_for_status()
             game_data = response.json()
 
-            # --- Fonctions helper pour extraire les listes ---
             def get_genres(data):
                 genres_list = data.get('genres', [])
                 return ", ".join([g['name'] for g in genres_list])
@@ -47,17 +51,12 @@ def create_thread():
                 # La structure est { "platform": { "name": "PC" } }
                 return ", ".join([p['platform']['name'] for p in platforms_list])
 
-            # --- FIN DES HELPERS ---
-
-            # --- Ajout des nouveaux champs ---
             thread = Thread(
                 title=game_data.get('name', 'Titre inconnu'),
                 author=user,
                 rawg_game_id=rawg_game_id,
                 game_image_url=game_data.get('background_image'),
                 game_description=game_data.get('description_raw'),
-
-                # Ajout des nouvelles données
                 metacritic=game_data.get('metacritic'),
                 released=game_data.get('released'),
                 website=game_data.get('website'),
@@ -81,6 +80,11 @@ def create_thread():
 
 
 def get_all_threads():
+    """
+        Récupère la liste des threasds
+        Avec gestions des filtres
+    """
+
     genre_filter = request.args.get('genre')
     search_query = request.args.get('search')
 
@@ -109,17 +113,16 @@ def get_all_threads():
 
 
 def get_thread_details(thread_id):
+    """
+        Charge la page complète d'un sujet : infos du jeu + tous les posts.
+    """
     thread = Thread.query.filter_by(id=thread_id).first_or_404(description="Sujet non trouvé")
 
-    # --- LE CORRECTIF EST ICI ---
     current_user_id_str = None
     try:
         current_user_id_str = get_jwt_identity()
-    # On attrape l'exception générique au lieu de 'NoAuthorizationError'
     except Exception:
-        # Si ça plante (pas de token), on continue simplement.
         pass
-    # --- FIN DU CORRECTIF ---
 
     has_liked_by_user = False
 
@@ -145,7 +148,6 @@ def get_thread_details(thread_id):
 
     thread_author_avatar_filename = thread.author.avatar_url or 'default_avatar.png'
 
-    # --- Ajout de tous les nouveaux champs ---
     thread_details = {
         "id": thread.id,
         "title": thread.title,
@@ -157,12 +159,8 @@ def get_thread_details(thread_id):
         "game_image_url": thread.game_image_url,
         "game_description": thread.game_description,
         "rawg_game_id": thread.rawg_game_id,
-
-        # Champs de like
         "like_count": like_count,
         "has_liked_by_user": has_liked_by_user,
-
-        # Nouveaux champs de jeu
         "metacritic": thread.metacritic,
         "released": thread.released,
         "website": thread.website,
@@ -174,7 +172,9 @@ def get_thread_details(thread_id):
 
 
 def check_thread_exists(rawg_game_id):
-    # ... (pas de changement ici) ...
+    """
+    Fonction utile pour front pour savoir si le threads existe deja ou pas
+    """
     thread = Thread.query.filter_by(rawg_game_id=rawg_game_id).first()
     if thread:
         return jsonify({"exists": True, "thread_id": thread.id}), 200
@@ -183,7 +183,9 @@ def check_thread_exists(rawg_game_id):
 
 
 def delete_thread(thread_id):
-    # ... (pas de changement ici) ...
+    """
+    Suppression d'un thread avec verif que c est bien l auteur
+    """
     current_user_id = get_jwt_identity()
     thread = Thread.query.get_or_404(thread_id)
     if thread.user_id != int(current_user_id):
@@ -194,7 +196,9 @@ def delete_thread(thread_id):
 
 
 def toggle_like_thread(thread_id):
-    # ... (pas de changement ici) ...
+    """
+    Fonstion pour like sujet, mettre a jour table + incrementer compteur
+    """
     current_user_id = get_jwt_identity()
     user = User.query.get(int(current_user_id))
     thread = Thread.query.get_or_404(thread_id)
@@ -225,7 +229,6 @@ def get_top_genres():
 
     for thread in threads:
         if thread.genres:
-            # "Action, RPG" -> ["Action", "RPG"]
             genres_list = [g.strip() for g in thread.genres.split(',')]
             all_genres.extend(genres_list)
 

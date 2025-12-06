@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import './CreateThreadPage.css';
 
 // Hook simple pour "déclencher" une action après un délai
-// On l'utilise pour ne pas appeler l'API à chaque frappe
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -66,7 +65,7 @@ function CreateThreadPage() {
   }, [debouncedSearchQuery, searchRawgGames, selectedGame]);
 
 
-  // MODIFIÉ : Gère la sélection ET la vérification
+  // Selection et verif jeu
   const handleSelectGame = async (game) => {
     setSelectedGame(game);
     setSearchQuery(game.name); // Remplit le champ de recherche avec le nom
@@ -93,12 +92,12 @@ function CreateThreadPage() {
     }
   };
 
-  // MODIFIÉ : Réinitialise les nouveaux états
+  //  Réinitialise les nouveaux états
   const handleClearSelection = () => {
     setSelectedGame(null);
     setSearchQuery('');
-    setExistingThreadId(null); // Réinitialiser
-    setMessage(''); // Réinitialiser
+    setExistingThreadId(null);
+    setMessage('');
     setIsError(false);
   };
 
@@ -111,13 +110,13 @@ function CreateThreadPage() {
     }
 
     try {
-      // L'API backend s'occupe de "créer OU trouver" le sujet
+      // L'API  s'occupe de "créer OU trouver" le sujet
       const response = await api.post('/api/threads', {
         rawg_game_id: selectedGame.id,
         content: content
       });
 
-      // Naviguer vers le sujet (qu'il soit nouveau ou existant)
+      // Naviguer vers le sujet
       navigate(`/threads/${response.data.id}`);
 
     } catch (error) {
@@ -132,7 +131,7 @@ return (
         <h2>Lancer une nouvelle discussion</h2>
         <form onSubmit={handleSubmit}>
 
-          {/* --- Section 1: Sélection du jeu --- */}
+          {/* Sélection du jeu --- */}
           <div className="form-group">
             <label className="form-label">1. Choisissez un jeu :</label>
             <input
@@ -184,7 +183,7 @@ return (
             </ul>
           )}
 
-          {/* --- Section 2: Contenu du post --- */}
+          {/* Contenu du post  */}
           {selectedGame && (
             <div className="form-group">
               <label className="form-label">2. Votre premier message :</label>
@@ -203,8 +202,7 @@ return (
             {existingThreadId ? "Ajouter à la discussion" : "Lancer la discussion"}
           </button>
         </form>
-        
-        {/* Message de statut (style géré par isError) */}
+
         {message && (
           <p className={`form-message ${isError ? '' : 'success'}`}>
             {message}

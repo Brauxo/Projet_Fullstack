@@ -6,9 +6,7 @@ from extensions import db
 from models import User, Thread, Post
 from werkzeug.security import generate_password_hash
 
-# --- CONFIGURATION ---
 
-# 15 jeux variés
 GAMES_TO_ADD = [
     "The Witcher 3: Wild Hunt",
     "Grand Theft Auto V",
@@ -27,9 +25,8 @@ GAMES_TO_ADD = [
     "Final Fantasy VII Remake"
 ]
 
-# 50 Commentaires variés pour simuler une vraie communauté
+#Generé par gemini ;)
 SAMPLE_COMMENTS = [
-    # Positifs
     "Ce jeu est une pure merveille artistique.",
     "J'ai passé 100h dessus et je n'ai toujours pas fini !",
     "Meilleur jeu de la décennie, sans débat.",
@@ -41,7 +38,7 @@ SAMPLE_COMMENTS = [
     "Je ne m'en lasse pas, c'est ma 3ème run.",
     "La bande son est incroyable, je l'écoute en boucle.",
 
-    # Négatifs / Critiques
+
     "Franchement, c'est surcoté à mon avis.",
     "Le gameplay est un peu rigide au début.",
     "C'est bourré de bugs, attendez un patch.",
@@ -52,7 +49,6 @@ SAMPLE_COMMENTS = [
     "L'open world est vide, on s'ennuie vite.",
     "L'IA des ennemis est aux fraises.",
 
-    # Questions / Entraide
     "Quelqu'un veut faire une partie ce soir ?",
     "Impossible de battre le boss du niveau 4, à l'aide !",
     "Vous savez où trouver l'épée légendaire ?",
@@ -62,7 +58,6 @@ SAMPLE_COMMENTS = [
     "Vous me conseillez de jouer manette ou clavier ?",
     "C'est mieux en solo ou en coop ?",
 
-    # Gaming Culture / Courts
     "GOTY.",
     "Masterclass.",
     "Ez.",
@@ -73,7 +68,6 @@ SAMPLE_COMMENTS = [
     "Bof.",
     "A éviter.",
 
-    # Spécifiques / Roleplay
     "C'est beaucoup mieux optimisé depuis la dernière mise à jour.",
     "Le mode multijoueur est addictif.",
     "L'ambiance est oppressante, j'adore.",
@@ -119,8 +113,8 @@ def seed():
             ("CozyBuilder", "cozy@gamehub.com"),
             ("SpeedRunner_X", "speed@gamehub.com"),
             ("RPG_Lover", "rpg@gamehub.com"),
-            ("TrollFace", "troll@gamehub.com"),  # Nouveau
-            ("CasualGamer", "casual@gamehub.com")  # Nouveau
+            ("TrollFace", "troll@gamehub.com"),
+            ("CasualGamer", "casual@gamehub.com")
         ]
 
         for username, email in user_data:
@@ -139,7 +133,6 @@ def seed():
 
         for game_name in GAMES_TO_ADD:
             try:
-                # 1. Recherche
                 print(f"Recherche de : {game_name}...")
                 search_url = "https://api.rawg.io/api/games"
                 params = {'key': api_key, 'search': game_name, 'page_size': 1}
@@ -154,13 +147,11 @@ def seed():
                 game_summary = search_data['results'][0]
                 game_id = game_summary['id']
 
-                # 2. Détails
                 details_url = f"https://api.rawg.io/api/games/{game_id}"
                 details_res = requests.get(details_url, params={'key': api_key})
                 details_res.raise_for_status()
                 full_data = details_res.json()
 
-                # 3. Thread
                 author = random.choice(users)
                 thread = Thread(
                     title=full_data.get('name'),
@@ -176,21 +167,18 @@ def seed():
                 )
                 db.session.add(thread)
 
-                # 4. Likes aléatoires
                 potential_likers = list(users)
                 random.shuffle(potential_likers)
                 nb_likes = random.randint(0, len(users))
                 for i in range(nb_likes):
                     thread.liked_by.append(potential_likers[i])
 
-                # 5. BEAUCOUP DE POSTS (entre 3 et 10 par jeu)
                 nb_posts = random.randint(3, 10)
 
                 for _ in range(nb_posts):
                     commenter = random.choice(users)
                     content = random.choice(SAMPLE_COMMENTS)
 
-                    # Petite chance (20%) d'ajouter un "C'est vrai" ou "Pas d'accord" pour simuler une discussion
                     if random.random() < 0.2:
                         prefix = random.choice(["Pas d'accord. ", "Exactement ! ", "Mdr, "])
                         content = prefix + content.lower()
